@@ -38,7 +38,11 @@ The main software environments used in this study include:
 - **R:** Spatial data processing, transportation network analysis, emission calculations, and visualization.
 - **GAMS:** Mathematical programming and spatial optimization.
 - **CPLEX:** Linear programming solver used for the optimization models.
-- **GitHub CLI:** Downloading large datasets stored as GitHub Release assets.
+
+Additional tools for accessing and reconstructing the large input dataset include:
+
+- **GitHub CLI (gh):** Downloading large dataset files from GitHub Releases.
+- **macOS/Linux terminal or Windows PowerShell:** Reconstructing the original GDX file and verifying data integrity.
 
 Additional R package dependencies and implementation details can be identified from the corresponding scripts.
 
@@ -46,7 +50,7 @@ Additional R package dependencies and implementation details can be identified f
 
 The analyses draw on spatially explicit agricultural production, food consumption, transportation network, and GHG emission datasets.
 
-Due to the size of the datasets and potential third-party data restrictions, some original input datasets may not be directly included in this repository.
+Due to the size of the datasets and potential third-party data restrictions, some original input datasets may not be directly included in the main GitHub repository.
 
 To facilitate reproducibility, the large GAMS input dataset `distanceHisv_all.gdx`, containing spatial distance information used in the food allocation optimization, is provided through GitHub Releases.
 
@@ -58,102 +62,245 @@ To facilitate reproducibility, the large GAMS input dataset `distanceHisv_all.gd
 
 **Original file size:** Approximately 17 GB
 
-**Storage:** GitHub Releases
+**Storage location:** GitHub Releases
 
-**Release:** `distanceHisv-data-v1`
+**Release version:** `distanceHisv-data-v1`
 
 **Download link:**
 
-[Download distanceHisv_all.gdx dataset](https://github.com/dengzhong/Reproduction-Package-for-dietary-transition-and-localized-food-supply-/releases/tag/distanceHisv-data-v1)
+[Download the complete GAMS input dataset](https://github.com/dengzhong/Reproduction-Package-for-dietary-transition-and-localized-food-supply-/releases/tag/distanceHisv-data-v1)
 
-Because the original dataset exceeds GitHub's individual file size limits, it has been divided into 11 consecutive parts without modifying the underlying data.
+Because the original dataset exceeds GitHub's individual file size limits, it has been divided into 11 consecutive parts without modifying the underlying binary data.
 
-The release contains:
+The release contains the following files:
 
-- `distanceHisv_all.gdx.part-aaa`
-- `distanceHisv_all.gdx.part-aab`
-- `distanceHisv_all.gdx.part-aac`
-- `distanceHisv_all.gdx.part-aad`
-- `distanceHisv_all.gdx.part-aae`
-- `distanceHisv_all.gdx.part-aaf`
-- `distanceHisv_all.gdx.part-aag`
-- `distanceHisv_all.gdx.part-aah`
-- `distanceHisv_all.gdx.part-aai`
-- `distanceHisv_all.gdx.part-aaj`
-- `distanceHisv_all.gdx.part-aak`
-- `SHA256SUMS.txt`
+| File | Description |
+|---|---|
+| `distanceHisv_all.gdx.part-aaa` | Data part 1 |
+| `distanceHisv_all.gdx.part-aab` | Data part 2 |
+| `distanceHisv_all.gdx.part-aac` | Data part 3 |
+| `distanceHisv_all.gdx.part-aad` | Data part 4 |
+| `distanceHisv_all.gdx.part-aae` | Data part 5 |
+| `distanceHisv_all.gdx.part-aaf` | Data part 6 |
+| `distanceHisv_all.gdx.part-aag` | Data part 7 |
+| `distanceHisv_all.gdx.part-aah` | Data part 8 |
+| `distanceHisv_all.gdx.part-aai` | Data part 9 |
+| `distanceHisv_all.gdx.part-aaj` | Data part 10 |
+| `distanceHisv_all.gdx.part-aak` | Data part 11 |
+| `SHA256SUMS.txt` | SHA-256 checksum of the original GDX file |
 
-The 11 parts collectively contain the complete original GDX file. The SHA-256 checksum is provided to verify data integrity after reconstruction.
+Together, the 11 parts contain the complete original dataset. They can be concatenated in filename order to reconstruct the original GDX file without any loss or modification of data.
 
-**Note:** Release assets are stored separately from the Git repository and are not downloaded automatically by `git clone`. Access to release assets requires appropriate repository permissions while the repository remains private.
+**Important:** GitHub Release assets are stored separately from the repository's source files and are not automatically downloaded when cloning the repository using `git clone`.
 
-### Downloading the dataset
+While the repository remains private, access to these assets requires appropriate GitHub repository permissions.
 
-The complete dataset can be downloaded manually from the GitHub Release page.
+### Step 1. Download the dataset
 
-Alternatively, users with access to the repository can download all release assets using GitHub CLI:
+The complete dataset can be downloaded manually from the GitHub Release page or automatically using GitHub CLI.
+
+#### Option A: Manual download (Windows, macOS, and Linux)
+
+1. Open the [GitHub Release page](https://github.com/dengzhong/Reproduction-Package-for-dietary-transition-and-localized-food-supply-/releases/tag/distanceHisv-data-v1).
+2. Locate the **Assets** section.
+3. Download all 11 files named `distanceHisv_all.gdx.part-aaa` through `distanceHisv_all.gdx.part-aak`.
+4. Download `SHA256SUMS.txt`.
+5. Save all 12 files in the same folder.
+
+All 11 data parts are required to reconstruct the original GDX file.
+
+#### Option B: Download using GitHub CLI (Windows, macOS, and Linux)
+
+Install GitHub CLI if it is not already available:
+
+https://cli.github.com/
+
+Authenticate with GitHub if necessary:
 
 ```bash
-gh release download distanceHisv-data-v1 \
-  --repo "dengzhong/Reproduction-Package-for-dietary-transition-and-localized-food-supply-" \
-  --dir distanceHisv_release_parts
+gh auth login
 ```
 
-This command downloads all 11 data parts and the SHA-256 checksum file into the specified directory.
+Then execute the following command in a terminal or Windows PowerShell:
 
-For private repositories, GitHub CLI authentication and appropriate repository access permissions are required.
+```bash
+gh release download distanceHisv-data-v1 --repo "dengzhong/Reproduction-Package-for-dietary-transition-and-localized-food-supply-" --dir "distanceHisv_release_parts"
+```
 
-### Reconstructing the original GDX file
+This command downloads all release assets, including the 11 data parts and `SHA256SUMS.txt`, into the `distanceHisv_release_parts` directory.
 
-After downloading all parts, the original `distanceHisv_all.gdx` file can be reconstructed on macOS or Linux using:
+For private repositories, appropriate GitHub authentication and repository access permissions are required.
+
+### Step 2. Reconstruct the original GDX file
+
+The 11 downloaded parts must be combined in alphabetical order to restore the original `distanceHisv_all.gdx`.
+
+The following procedures are provided separately for macOS/Linux and Windows.
+
+#### Option A: macOS and Linux
+
+Open a terminal and navigate to the folder containing the downloaded files:
 
 ```bash
 cd distanceHisv_release_parts
+```
 
+Reconstruct the original file:
+
+```bash
 cat distanceHisv_all.gdx.part-* > distanceHisv_all.gdx
 ```
 
-The command concatenates all 11 parts in alphabetical order to reconstruct the original binary GDX file.
-
-**Important:** All 11 parts must be present in the same directory before reconstruction. The files must be combined as binary data without modification.
-
-The reconstructed `distanceHisv_all.gdx` can then be used as an input to the corresponding GAMS optimization scripts, with file paths adjusted as necessary.
-
-### Data integrity verification
-
-To verify that the reconstructed file is identical to the original dataset, calculate its SHA-256 checksum.
-
-On macOS:
-
-```bash
-shasum -a 256 -c SHA256SUMS.txt
-```
-
-On Linux:
-
-```bash
-sha256sum -c SHA256SUMS.txt
-```
-
-If reconstruction is successful, the command should return:
+This command concatenates the 11 binary parts in filename order and generates:
 
 ```text
-distanceHisv_all.gdx: OK
+distanceHisv_all.gdx
 ```
 
-The expected SHA-256 checksum of the original file is:
+The resulting file is identical to the original dataset if all parts have been downloaded correctly and remain unchanged.
+
+#### Option B: Windows (PowerShell)
+
+Open Windows PowerShell and navigate to the directory containing the downloaded files:
+
+```powershell
+cd "distanceHisv_release_parts"
+```
+
+Run the following PowerShell commands to reconstruct the original GDX file:
+
+```powershell
+$parts = @(Get-ChildItem -File -Filter "distanceHisv_all.gdx.part-*" | Sort-Object Name)
+
+if ($parts.Count -ne 11) {
+    throw "Expected 11 data parts, but found $($parts.Count)."
+}
+
+$output = Join-Path (Get-Location) "distanceHisv_all.gdx"
+
+$destination = [System.IO.File]::Open(
+    $output,
+    [System.IO.FileMode]::CreateNew
+)
+
+try {
+    foreach ($part in $parts) {
+        Write-Host "Merging $($part.Name)..."
+
+        $source = [System.IO.File]::OpenRead($part.FullName)
+
+        try {
+            $source.CopyTo($destination)
+        }
+        finally {
+            $source.Dispose()
+        }
+    }
+}
+finally {
+    $destination.Dispose()
+}
+
+Write-Host "GDX file reconstruction completed."
+```
+
+This procedure:
+
+1. Identifies all 11 downloaded data parts.
+2. Sorts the files alphabetically.
+3. Reads and combines the files sequentially as binary data.
+4. Writes the reconstructed dataset to `distanceHisv_all.gdx`.
+5. Avoids loading the entire 17 GB dataset into memory.
+6. Prevents accidental overwriting of an existing reconstructed file.
+
+The resulting file can be used directly in GAMS after successful integrity verification.
+
+**Note:** Ensure that sufficient free disk space is available before reconstruction. Approximately 17 GB of additional storage is required for the reconstructed file.
+
+### Step 3. Verify data integrity
+
+A SHA-256 checksum is provided to verify that the reconstructed GDX file is byte-for-byte identical to the original dataset.
+
+The expected SHA-256 checksum is:
 
 ```text
 3b862d64f9fddb82f1f1db5025aa97822be2be27d73d893e05f23de9186eadda
 ```
 
-A matching checksum confirms that the reconstructed file is byte-for-byte identical to the original dataset.
+#### Option A: macOS
+
+In the directory containing the reconstructed GDX file and `SHA256SUMS.txt`, execute:
+
+```bash
+shasum -a 256 -c SHA256SUMS.txt
+```
+
+#### Option B: Linux
+
+Execute:
+
+```bash
+sha256sum -c SHA256SUMS.txt
+```
+
+If the file has been reconstructed correctly, the output should be:
+
+```text
+distanceHisv_all.gdx: OK
+```
+
+#### Option C: Windows (PowerShell)
+
+Open PowerShell in the directory containing the reconstructed GDX file and `SHA256SUMS.txt`.
+
+Execute:
+
+```powershell
+$expected = (Get-Content "SHA256SUMS.txt" | Select-Object -First 1).Split(' ')[0].ToLowerInvariant()
+
+$actual = (Get-FileHash "distanceHisv_all.gdx" -Algorithm SHA256).Hash.ToLowerInvariant()
+
+if ($actual -eq $expected) {
+    Write-Host "SHA-256 verification: OK"
+}
+else {
+    throw "SHA-256 verification failed."
+}
+```
+
+If verification is successful, PowerShell will display:
+
+```text
+SHA-256 verification: OK
+```
+
+A successful checksum verification confirms that the reconstructed file is identical to the original GDX file.
+
+If verification fails, users should check that all 11 parts were downloaded completely and concatenated in the correct order.
+
+### Step 4. Use the reconstructed dataset in GAMS
+
+After successful reconstruction and verification, the file:
+
+```text
+distanceHisv_all.gdx
+```
+
+can be used as an input dataset for the corresponding GAMS spatial optimization models.
+
+Users should place the reconstructed file in the expected input directory or adjust the file paths in the GAMS scripts accordingly.
+
+The GDX format is supported by GAMS and can be inspected using GAMS-compatible tools.
 
 ### Additional data and reproducibility information
 
-The original code archive and the data sources documented in the manuscript and its Supplementary Information provide additional information for understanding and reproducing the analytical framework.
+The original source code and additional methodological information are available through the Figshare archive:
 
-The GitHub repository provides organized code for examination and reproduction, while the Figshare archive preserves the original implementation for direct comparison and verification.
+https://doi.org/10.6084/m9.figshare.28448249
+
+The data sources, assumptions, and analytical procedures are further documented in the manuscript and its Supplementary Information.
+
+This GitHub repository provides organized code and supporting materials to facilitate examination and reproduction of the analytical framework, while the Figshare archive preserves the original implementation for direct comparison and verification.
 
 ## Citation
 
