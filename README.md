@@ -136,7 +136,7 @@ The GPWv4 Beta release is archived separately from the subsequent Version 4.0 re
 3. Extract the downloaded archive, where applicable.
 4. Place the extracted raster files in the following directory within this repository:
 
-`Other data/population/`
+`Input/Other data/population/`
 
 Preserve the original filenames and spatial reference information required by the data-processing scripts.
 
@@ -148,13 +148,157 @@ The Beta population-count data are available through the archived DOI listed abo
 
 The release notes and information on the Beta archive are available through the [GPWv4 data documentation](https://sedac.ciesin.columbia.edu/data/collection/gpw-v4).
 
+### 4. Transportation networks
+
+Transportation network data were obtained from global road density rasters and global shipping route datasets. These data provide the spatial infrastructure information used to construct the transportation network and associated friction surfaces.
+
+#### 4.1. GRIP4 road density data
+
+The road density data were obtained from the **Global Roads Inventory Project, Version 4 (GRIP4)**.
+
+**Data sources:**
+
+- [GRIP global roads database — Official GLOBIO download page](https://www.globio.info/download-grip-dataset)
+- [GRIP4 — PBL Data Portal](https://dataportaal.pbl.nl/GRIP4)
+- [GRIP4 supplementary spatial data — Zenodo](https://doi.org/10.5281/zenodo.6420961)
+
+##### 4.1.1. Dataset information
+
+- **Dataset:** Global Roads Inventory Project, Version 4
+- **Data type:** Global road density raster data
+- **Spatial resolution:** 5 arc-minutes (approximately 0.083333333 degrees)
+- **Spatial reference:** WGS84 geographic coordinates (latitude and longitude)
+- **Unit:** Meters of road per square kilometer per grid cell, as specified in the dataset documentation
+- **Road categories:** Total road network and five road types
+- **Reference:** Meijer et al. (2018)
+
+GRIP4 provides global road density rasters representing the spatial distribution of road infrastructure. The dataset includes the total road network and five road categories: highways, primary roads, secondary roads, tertiary roads, and local roads.
+
+##### 4.1.2. Data used in this study
+
+Download the six global road density raster archives from the official GRIP4 download page.
+
+| Dataset | Description |
+|---|---|
+| `GRIP4_density_total.zip` | Total road density, all road types combined |
+| `GRIP4_density_tp1.zip` | Type 1: Highways |
+| `GRIP4_density_tp2.zip` | Type 2: Primary roads |
+| `GRIP4_density_tp3.zip` | Type 3: Secondary roads |
+| `GRIP4_density_tp4.zip` | Type 4: Tertiary roads |
+| `GRIP4_density_tp5.zip` | Type 5: Local roads |
+
+All six datasets can be downloaded from the [official GRIP4 download page](https://www.globio.info/download-grip-dataset). Alternatively, consult the [PBL Data Portal](https://dataportaal.pbl.nl/GRIP4).
+
+##### 4.1.3. Expected files
+
+After extracting the downloaded archives, retain the following files where supplied by the dataset:
+
+| File | Description |
+|---|---|
+| `GRIP4_TOTAL_DENS_m_km2.asc` | Density of all road types combined |
+| `GRIP4_TP1_DENS_m_km2.asc` | Density of highways |
+| `GRIP4_TP2_DENS_m_km2.asc` | Density of primary roads |
+| `GRIP4_TP3_DENS_m_km2.asc` | Density of secondary roads |
+| `GRIP4_TP4_DENS_m_km2.asc` | Density of tertiary roads |
+| `GRIP4_TP5_DENS_m_km2.asc` | Density of local roads |
+| `GRIP4_area_land_km2.asc` | Land area per 5-arcminute grid cell, in km² |
+| `GRIP4_density_m_km2.lyr` | Example ArcGIS layer for road density classification |
+
+The `.asc` files are ASCII grid rasters. The `.lyr` file is an example ArcGIS layer for visualization and is not required for numerical raster analysis.
+
+##### 4.1.4. Data preparation instructions
+
+1. Open the [official GRIP4 download page](https://www.globio.info/download-grip-dataset).
+2. Download the six global road density raster ZIP archives listed above.
+3. Extract the downloaded archives.
+4. Place the extracted files in the following directory within this repository:
+
+`Input/Other data/transport/`
+
+Preserve the original filenames and raster header information. Ensure that the rasters retain their original spatial resolution and WGS84 coordinate reference.
+
+##### 4.1.5. Reference
+
+Meijer, J. R., Huijbregts, M. A. J., Schotten, C. G. J., & Schipper, A. M. (2018). Global patterns of current and future road infrastructure. *Environmental Research Letters*, 13, 064006.
+
+https://doi.org/10.1088/1748-9326/aabd42
+
+When using GRIP4, cite the original publication and acknowledge the dataset source.
+
+#### 4.2. Global Shipping Lanes data
+
+The global shipping route data were obtained from the **Global Shipping Lanes** dataset published by Benden (2022).
+
+**Data sources:**
+
+- [Global Shipping Lanes — Zenodo dataset](https://doi.org/10.5281/zenodo.6361763)
+- [Global Shipping Lanes — GitHub repository](https://github.com/newzealandpaul/Shipping-Lanes)
+
+##### 4.2.1. Dataset information
+
+- **Dataset:** Global Shipping Lanes
+- **Author:** Benden, P.
+- **Publication year:** 2022
+- **Data type:** Global shipping route vector data
+- **Available formats:** GeoJSON and ESRI Shapefile
+- **Route categories:** Major, Middle, and Minor
+- **Persistent identifier:** [https://doi.org/10.5281/zenodo.6361763](https://doi.org/10.5281/zenodo.6361763)
+
+The dataset represents global shipping lanes derived from the *Map of The World's Oceans* published by the Central Intelligence Agency (CIA) in October 2012, with subsequent corrections to the original map.
+
+The route data contain three categories:
+
+- **Major:** Major shipping lanes.
+- **Middle:** Intermediate shipping lanes.
+- **Minor:** Minor shipping lanes.
+
+These categories distinguish shipping route importance and are associated with differences in maritime traffic.
+
+##### 4.2.2. Data used in this study
+
+This study uses the vector shipping route network to represent maritime transportation corridors.
+
+The original shipping route data are provided in vector format. For integration with the other transportation networks, the routes are converted into a standardized 5-arcminute raster network during data processing.
+
+##### 4.2.3. Data preparation instructions
+
+1. Open the [Global Shipping Lanes dataset on Zenodo](https://doi.org/10.5281/zenodo.6361763) or the [GitHub repository](https://github.com/newzealandpaul/Shipping-Lanes).
+2. Download the shipping route dataset.
+3. Extract the downloaded archive, where applicable.
+4. Retain the original vector data, including the GeoJSON or Shapefile and its associated files.
+5. Place the extracted files in the following directory within this repository:
+
+`Input/Other data/transport/`
+
+Preserve the original filenames and route-type attributes, particularly the `Major`, `Middle`, and `Minor` classifications, because these categories are used to distinguish shipping routes during transportation network construction.
+
+Please retain appropriate attribution and follow the license terms supplied with the downloaded dataset.
+
+##### 4.2.4. Processing in the transportation network
+
+The shipping route data are converted from vector features into a 5-arcminute raster network to match the spatial resolution used for the transportation analysis.
+
+In the original transportation network construction:
+
+- Major shipping routes are assigned a travel speed of 19 km/h.
+- Middle and minor shipping routes are assigned a travel speed of 10 km/h.
+- Oceanic cells outside the designated shipping routes are assigned a higher relative transport cost to discourage unrealistic off-route transport.
+
+The rasterized shipping network is integrated with road and rail networks to construct the transportation friction surface.
+
+##### 4.2.5. Reference
+
+Benden, P. (2022). *Global Shipping Lanes* [Data set]. Zenodo.
+
+https://doi.org/10.5281/zenodo.6361763
+
 ## Code and reproducibility
 
 The computational framework primarily uses **R and GAMS** for data processing, spatial analysis, optimization, emission accounting, and visualization.
 
 The main analytical procedures include:
 
-1. **Data preparation:** Processing spatially explicit food production, consumption, and emission datasets.
+1. **Data preparation:** Processing spatially explicit food production, consumption, population, and emission datasets.
 2. **Transportation network construction:** Constructing transportation resistance surfaces and estimating transport distances using road, rail, and shipping networks.
 3. **Spatial optimization:** Optimizing food allocation between production and consumption locations under different dietary and food supply scenarios.
 4. **GHG emission accounting:** Quantifying on-farm agricultural production emissions and transportation emissions associated with optimized food flows.
@@ -189,7 +333,7 @@ Additional R package dependencies and implementation details can be identified f
 
 The analyses draw on spatially explicit agricultural production, food consumption, population, transportation network, and GHG emission datasets.
 
-The livestock production and grain-based feed consumption data are available through the [CSIRO Data Access Portal](https://data.csiro.au/collection/csiro:29893). The crop production data used in this study are from SPAM 2020 Version 1.0, as documented in the Data preparation section. The gridded population data are available through the archived GPWv4 Beta dataset records.
+The livestock production and grain-based feed consumption data are available through the [CSIRO Data Access Portal](https://data.csiro.au/collection/csiro:29893). The crop production data used in this study are from SPAM 2020 Version 1.0. The gridded population data are available through the archived GPWv4 Beta dataset records. The road density and shipping route data are available through the GRIP4 and Global Shipping Lanes datasets, respectively.
 
 To facilitate reproducibility, the large GAMS input dataset `distanceHisv_all.gdx`, containing spatial distance information used in the food allocation optimization, is provided through GitHub Releases.
 
@@ -238,7 +382,7 @@ While the repository remains private, access to these assets requires appropriat
 
 The complete dataset can be downloaded manually from the GitHub Release page or automatically using GitHub CLI.
 
-#### Option A: Manual download (Windows, macOS, and Linux)
+#### Option A. Manual download (Windows, macOS, and Linux)
 
 1. Open the [GitHub Release page](https://github.com/dengzhong/Reproduction-Package-for-dietary-transition-and-localized-food-supply-/releases/tag/distanceHisv-data-v1).
 2. Locate the **Assets** section.
@@ -248,7 +392,7 @@ The complete dataset can be downloaded manually from the GitHub Release page or 
 
 All 11 data parts are required to reconstruct the original GDX file.
 
-#### Option B: Download using GitHub CLI (Windows, macOS, and Linux)
+#### Option B. Download using GitHub CLI (Windows, macOS, and Linux)
 
 Install GitHub CLI if it is not already available:
 
@@ -276,7 +420,7 @@ The 11 downloaded parts must be combined in alphabetical order to restore the or
 
 The following procedures are provided separately for macOS/Linux and Windows.
 
-#### Option A: macOS and Linux
+#### Option A. macOS and Linux
 
 Open a terminal and navigate to the folder containing the downloaded files:
 
@@ -292,7 +436,7 @@ cat distanceHisv_all.gdx.part-* > distanceHisv_all.gdx
 
 This command concatenates the 11 binary parts in filename order and generates `distanceHisv_all.gdx`.
 
-#### Option B: Windows (PowerShell)
+#### Option B. Windows (PowerShell)
 
 Open Windows PowerShell and navigate to the directory containing the downloaded files:
 
@@ -351,7 +495,7 @@ The expected SHA-256 checksum is:
 3b862d64f9fddb82f1f1db5025aa97822be2be27d73d893e05f23de9186eadda
 ```
 
-#### Option A: macOS
+#### Option A. macOS
 
 In the directory containing the reconstructed GDX file and `SHA256SUMS.txt`, execute:
 
@@ -359,7 +503,7 @@ In the directory containing the reconstructed GDX file and `SHA256SUMS.txt`, exe
 shasum -a 256 -c SHA256SUMS.txt
 ```
 
-#### Option B: Linux
+#### Option B. Linux
 
 Execute:
 
@@ -373,7 +517,7 @@ If the file has been reconstructed correctly, the output should be:
 distanceHisv_all.gdx: OK
 ```
 
-#### Option C: Windows (PowerShell)
+#### Option C. Windows (PowerShell)
 
 Open PowerShell in the directory containing the reconstructed GDX file and `SHA256SUMS.txt`.
 
