@@ -52,25 +52,59 @@ These datasets provide spatially explicit estimates of grain biomass consumption
 #### 1.3. Data preparation instructions
 
 1. Open the [CSIRO dataset page](https://data.csiro.au/collection/csiro:29893).
-2. Download all 14 ZIP archives listed in Sections 1.1 and 1.2.
+2. Download all 14 ZIP archives listed above.
 3. Extract the downloaded archives.
 4. Place the extracted files in the following directory within this repository:
 
-```text
-Input/Livestock Production Systems data/
-```
+`Input/Livestock Production Systems data/`
 
-The input directory should be organized as follows:
+Preserve the original filenames and any required directory structure to ensure compatibility with the subsequent data-processing scripts.
 
-```text
-Input/
-├── GAMS input/
-└── Livestock Production Systems data/
-    ├── [Extracted livestock production files]
-    └── [Extracted grain-based feed consumption files]
-```
+### 2. SPAM crop production data
 
-All required files from both groups should be placed in the `Livestock Production Systems data` directory. Preserve their original filenames and associated files to ensure compatibility with the subsequent data-processing scripts.
+The spatially disaggregated crop production data were obtained from the International Food Policy Research Institute (IFPRI)'s Spatial Production Allocation Model (SPAM).
+
+**Data source:**
+
+[Global Spatially-Disaggregated Crop Production Statistics Data for 2020, Version 1.0 — Historical dataset record](https://cgspace.cgiar.org/items/e3cb3635-4bb7-4b88-b90d-3d1c76364f82)
+
+**Dataset information:**
+
+- **Dataset:** Global Spatially-Disaggregated Crop Production Statistics Data for 2020
+- **Model:** Spatial Production Allocation Model (SPAM)
+- **Version used in this study:** 2020 Version 1.0
+- **Download year:** 2024
+- **Reference year:** 2020
+- **Spatial resolution:** 5 arc-minutes
+- **Data provider:** International Food Policy Research Institute (IFPRI)
+- **Persistent identifier:** [https://doi.org/10.7910/DVN/SWPENT](https://doi.org/10.7910/DVN/SWPENT)
+
+#### 2.1. Data used in this study
+
+This study uses the **crop production layers** from SPAM 2020 Version 1.0 to represent the spatial distribution of crop production.
+
+The required inputs are the production data for the crops included in the analysis, rather than the corresponding harvested area, physical area, or yield layers.
+
+#### 2.2. Data preparation instructions
+
+1. Open the [SPAM 2020 Version 1.0 historical dataset record](https://cgspace.cgiar.org/items/e3cb3635-4bb7-4b88-b90d-3d1c76364f82).
+2. Download the crop production data files for the crops included in this study.
+3. Extract the downloaded archives, where applicable.
+4. Place the extracted files in the following directory within this repository:
+
+`Input/SPAM data/`
+
+Preserve the original filenames and directory structure required by the data-processing scripts.
+
+#### 2.3. Version and reproducibility
+
+The analysis uses **SPAM 2020 Version 1.0**, downloaded in 2024. This is the version used to prepare the original analysis inputs.
+
+The current SPAM dataset page lists Version 2.0, Release 2:
+
+[SPAM 2020 Version 2.0, Release 2 — Current dataset record](https://doi.org/10.7910/DVN/SWPENT)
+
+Version 2.0 should not be substituted for Version 1.0 when reproducing the original analysis, because revisions to the underlying spatial production estimates may affect the results. Users should obtain Version 1.0 from the historical dataset record linked above.
 
 ## Code and reproducibility
 
@@ -113,9 +147,7 @@ Additional R package dependencies and implementation details can be identified f
 
 The analyses draw on spatially explicit agricultural production, food consumption, transportation network, and GHG emission datasets.
 
-Due to the size of the datasets and potential third-party data restrictions, some original input datasets may not be directly included in the main GitHub repository.
-
-The livestock production and grain-based feed consumption datasets can be obtained from the CSIRO Data Access Portal, as described in the Data preparation section.
+The livestock production and grain-based feed consumption data are available through the [CSIRO Data Access Portal](https://data.csiro.au/collection/csiro:29893). The crop production data used in this study are from SPAM 2020 Version 1.0, as documented in the Data preparation section.
 
 To facilitate reproducibility, the large GAMS input dataset `distanceHisv_all.gdx`, containing spatial distance information used in the food allocation optimization, is provided through GitHub Releases.
 
@@ -186,8 +218,6 @@ Authenticate with GitHub if necessary:
 gh auth login
 ```
 
-Alternatively, a properly authorized GitHub personal access token can be provided through the `GH_TOKEN` environment variable.
-
 Then execute the following command in a terminal or Windows PowerShell:
 
 ```bash
@@ -218,13 +248,7 @@ Reconstruct the original file:
 cat distanceHisv_all.gdx.part-* > distanceHisv_all.gdx
 ```
 
-This command concatenates the 11 binary parts in filename order and generates:
-
-```text
-distanceHisv_all.gdx
-```
-
-The resulting file is identical to the original dataset if all parts have been downloaded correctly and remain unchanged.
+This command concatenates the 11 binary parts in filename order and generates `distanceHisv_all.gdx`.
 
 #### Option B: Windows (PowerShell)
 
@@ -271,18 +295,9 @@ finally {
 Write-Host "GDX file reconstruction completed."
 ```
 
-This procedure:
+This procedure combines the files sequentially as binary data without loading the entire 17 GB dataset into memory. It also prevents accidental overwriting of an existing reconstructed file.
 
-1. Identifies all 11 downloaded data parts.
-2. Sorts the files alphabetically.
-3. Reads and combines the files sequentially as binary data.
-4. Writes the reconstructed dataset to `distanceHisv_all.gdx`.
-5. Avoids loading the entire 17 GB dataset into memory.
-6. Prevents accidental overwriting of an existing reconstructed file.
-
-The resulting file can be used directly in GAMS after successful integrity verification.
-
-**Note:** Ensure that sufficient free disk space is available before reconstruction. Approximately 17 GB of additional storage is required for the reconstructed file.
+Ensure that sufficient free disk space is available before reconstruction. Approximately 17 GB of additional storage is required for the reconstructed file.
 
 ### Step 3. Verify data integrity
 
@@ -341,21 +356,13 @@ If verification is successful, PowerShell will display:
 SHA-256 verification: OK
 ```
 
-A successful checksum verification confirms that the reconstructed file is identical to the original GDX file.
-
-If verification fails, users should check that all 11 parts were downloaded completely and concatenated in the correct order.
+A matching checksum confirms that the reconstructed file is identical to the original GDX file. If verification fails, check that all 11 parts were downloaded completely and concatenated in the correct order.
 
 ### Step 4. Use the reconstructed dataset in GAMS
 
-After successful reconstruction and verification, the file:
+After successful reconstruction and verification, the file `distanceHisv_all.gdx` can be used as an input dataset for the corresponding GAMS spatial optimization models.
 
-```text
-distanceHisv_all.gdx
-```
-
-can be used as an input dataset for the corresponding GAMS spatial optimization models.
-
-Users should place the reconstructed file in the expected input directory or adjust the file paths in the GAMS scripts accordingly.
+Place the reconstructed file in the expected input directory or adjust the file paths in the GAMS scripts accordingly.
 
 The GDX format is supported by GAMS and can be inspected using GAMS-compatible tools.
 
