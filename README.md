@@ -168,7 +168,7 @@ The road density data were obtained from the **Global Roads Inventory Project, V
 - **Data type:** Global road density raster data
 - **Spatial resolution:** 5 arc-minutes (approximately 0.083333333 degrees)
 - **Spatial reference:** WGS84 geographic coordinates (latitude and longitude)
-- **Unit:** Meters of road per square kilometer per grid cell, as specified in the dataset documentation
+- **Unit:** Meters of road per square kilometer per grid cell
 - **Road categories:** Total road network and five road types
 - **Reference:** Meijer et al. (2018)
 
@@ -223,8 +223,6 @@ Meijer, J. R., Huijbregts, M. A. J., Schotten, C. G. J., & Schipper, A. M. (2018
 
 https://doi.org/10.1088/1748-9326/aabd42
 
-When using GRIP4, cite the original publication and acknowledge the dataset source.
-
 #### 4.2. Global Shipping Lanes data
 
 The global shipping route data were obtained from the **Global Shipping Lanes** dataset published by Benden (2022).
@@ -252,8 +250,6 @@ The route data contain three categories:
 - **Middle:** Intermediate shipping lanes.
 - **Minor:** Minor shipping lanes.
 
-These categories distinguish shipping route importance and are associated with differences in maritime traffic.
-
 ##### 4.2.2. Data used in this study
 
 This study uses the vector shipping route network to represent maritime transportation corridors.
@@ -270,9 +266,7 @@ The original shipping route data are provided in vector format. For integration 
 
 `Input/Other data/transport/`
 
-Preserve the original filenames and route-type attributes, particularly the `Major`, `Middle`, and `Minor` classifications, because these categories are used to distinguish shipping routes during transportation network construction.
-
-Please retain appropriate attribution and follow the license terms supplied with the downloaded dataset.
+Preserve the original filenames and route-type attributes, particularly the `Major`, `Middle`, and `Minor` classifications.
 
 ##### 4.2.4. Processing in the transportation network
 
@@ -292,13 +286,91 @@ Benden, P. (2022). *Global Shipping Lanes* [Data set]. Zenodo.
 
 https://doi.org/10.5281/zenodo.6361763
 
+### 5. GADM administrative boundary data
+
+Administrative boundary data used in the spatial analysis are provided through the **GADM (Database of Global Administrative Areas)** dataset.
+
+**Original data source:**
+
+[GADM — Database of Global Administrative Areas](https://gadm.org/)
+
+To facilitate reproducibility, the GADM archive used in this study is distributed through the GitHub Release because the ZIP file exceeds GitHub's standard single-file upload limit of 100 MB.
+
+#### 5.1. Data used in this study
+
+The required archive is:
+
+`gadm.zip`
+
+The archive contains geographic administrative boundary data used for country-level spatial processing and related analyses.
+
+**Download link:**
+
+[Download GADM data from GitHub Releases](https://github.com/dengzhong/Reproduction-Package-for-dietary-transition-and-localized-food-supply-/releases/tag/distanceHisv-data-v1)
+
+The GADM archive is provided as an additional asset in the existing `distanceHisv-data-v1` Release. It is distributed separately from the main Git repository because of its file size.
+
+#### 5.2. Data preparation instructions
+
+1. Open the [GitHub Release page](https://github.com/dengzhong/Reproduction-Package-for-dietary-transition-and-localized-food-supply-/releases/tag/distanceHisv-data-v1).
+2. Locate the **Assets** section.
+3. Download the GADM ZIP archive (`gadm.zip`, or the asset whose filename ends with `gadm.zip`).
+4. Extract the downloaded archive.
+5. Place the extracted files in the following directory within this repository:
+
+`Input/Other data/countrylevel/`
+
+Preserve the original filenames and associated spatial data files. The extracted data should be placed directly in the designated directory, without introducing unnecessary additional folder levels.
+
+#### 5.3. Download using GitHub CLI
+
+Users with GitHub CLI installed can also download the GADM archive directly from the existing Release:
+
+```bash
+gh release download distanceHisv-data-v1 \
+  --repo "dengzhong/Reproduction-Package-for-dietary-transition-and-localized-food-supply-" \
+  --pattern "*gadm.zip" \
+  --dir "gadm_download"
+```
+
+This command downloads only the GADM archive matching the specified filename pattern, rather than downloading the entire Release.
+
+After downloading, extract the archive into:
+
+`Input/Other data/countrylevel/`
+
+For private repositories, appropriate GitHub authentication and repository access permissions are required.
+
+#### 5.4. Data organization
+
+After completing the preceding data preparation steps, the input directories should follow this structure:
+
+```text
+Input/
+├── GAMS input/
+├── Livestock Production Systems data/
+│   └── [Extracted livestock and feed data]
+├── SPAM data/
+│   └── [SPAM 2020 Version 1.0 crop production data]
+└── Other data/
+    ├── countrylevel/
+    │   └── [Extracted GADM administrative boundary data]
+    ├── population/
+    │   └── [GPWv4 population raster data]
+    └── transport/
+        ├── [GRIP4 road density data]
+        └── [Global Shipping Lanes data]
+```
+
+The downloaded datasets should retain the filenames and directory structures expected by the corresponding data-processing scripts.
+
 ## Code and reproducibility
 
 The computational framework primarily uses **R and GAMS** for data processing, spatial analysis, optimization, emission accounting, and visualization.
 
 The main analytical procedures include:
 
-1. **Data preparation:** Processing spatially explicit food production, consumption, population, and emission datasets.
+1. **Data preparation:** Processing spatially explicit food production, consumption, population, administrative boundaries, and emission datasets.
 2. **Transportation network construction:** Constructing transportation resistance surfaces and estimating transport distances using road, rail, and shipping networks.
 3. **Spatial optimization:** Optimizing food allocation between production and consumption locations under different dietary and food supply scenarios.
 4. **GHG emission accounting:** Quantifying on-farm agricultural production emissions and transportation emissions associated with optimized food flows.
@@ -322,20 +394,25 @@ The main software environments used in this study include:
 - **GAMS:** Mathematical programming and spatial optimization.
 - **CPLEX:** Linear programming solver used for the optimization models.
 
-Additional tools for accessing and reconstructing the large input dataset include:
+Additional tools for accessing and reconstructing the large input datasets include:
 
 - **GitHub CLI (gh):** Downloading large dataset files from GitHub Releases.
 - **macOS/Linux terminal or Windows PowerShell:** Reconstructing the original GDX file and verifying data integrity.
+- **Archive extraction software:** Extracting ZIP archives containing external input datasets.
 
 Additional R package dependencies and implementation details can be identified from the corresponding scripts.
 
 ## Data availability
 
-The analyses draw on spatially explicit agricultural production, food consumption, population, transportation network, and GHG emission datasets.
+The analyses draw on spatially explicit agricultural production, food consumption, population, administrative boundaries, transportation networks, and GHG emission datasets.
 
-The livestock production and grain-based feed consumption data are available through the [CSIRO Data Access Portal](https://data.csiro.au/collection/csiro:29893). The crop production data used in this study are from SPAM 2020 Version 1.0. The gridded population data are available through the archived GPWv4 Beta dataset records. The road density and shipping route data are available through the GRIP4 and Global Shipping Lanes datasets, respectively.
+The livestock production and grain-based feed consumption data are available through the [CSIRO Data Access Portal](https://data.csiro.au/collection/csiro:29893). The crop production data used in this study are from SPAM 2020 Version 1.0. Gridded population data are available through the archived GPWv4 dataset records. Road density and shipping route data are available through the GRIP4 and Global Shipping Lanes datasets, respectively.
 
-To facilitate reproducibility, the large GAMS input dataset `distanceHisv_all.gdx`, containing spatial distance information used in the food allocation optimization, is provided through GitHub Releases.
+Large input files that exceed GitHub's standard single-file size limit are distributed through the existing GitHub Release:
+
+[Large input datasets — GitHub Releases](https://github.com/dengzhong/Reproduction-Package-for-dietary-transition-and-localized-food-supply-/releases/tag/distanceHisv-data-v1)
+
+These include the GAMS distance dataset `distanceHisv_all.gdx` and the GADM administrative boundary archive `gadm.zip`.
 
 ### Large GAMS input dataset
 
@@ -355,7 +432,7 @@ To facilitate reproducibility, the large GAMS input dataset `distanceHisv_all.gd
 
 Because the original dataset exceeds GitHub's individual file size limits, it has been divided into 11 consecutive parts without modifying the underlying binary data.
 
-The release contains the following files:
+The GDX-specific files in the Release are:
 
 | File | Description |
 |---|---|
@@ -378,9 +455,9 @@ Together, the 11 parts contain the complete original dataset. They can be concat
 
 While the repository remains private, access to these assets requires appropriate GitHub repository permissions.
 
-### Step 1. Download the dataset
+### Step 1. Download the GDX dataset
 
-The complete dataset can be downloaded manually from the GitHub Release page or automatically using GitHub CLI.
+The complete GDX dataset can be downloaded manually from the GitHub Release page or automatically using GitHub CLI.
 
 #### Option A. Manual download (Windows, macOS, and Linux)
 
@@ -388,7 +465,7 @@ The complete dataset can be downloaded manually from the GitHub Release page or 
 2. Locate the **Assets** section.
 3. Download all 11 files named `distanceHisv_all.gdx.part-aaa` through `distanceHisv_all.gdx.part-aak`.
 4. Download `SHA256SUMS.txt`.
-5. Save all 12 files in the same folder.
+5. Save these 12 files in the same folder.
 
 All 11 data parts are required to reconstruct the original GDX file.
 
@@ -404,21 +481,23 @@ Authenticate with GitHub if necessary:
 gh auth login
 ```
 
-Then execute the following command in a terminal or Windows PowerShell:
+Then execute:
 
 ```bash
-gh release download distanceHisv-data-v1 --repo "dengzhong/Reproduction-Package-for-dietary-transition-and-localized-food-supply-" --dir "distanceHisv_release_parts"
+gh release download distanceHisv-data-v1 \
+  --repo "dengzhong/Reproduction-Package-for-dietary-transition-and-localized-food-supply-" \
+  --pattern "distanceHisv_all.gdx.part-*" \
+  --pattern "SHA256SUMS.txt" \
+  --dir "distanceHisv_release_parts"
 ```
 
-This command downloads all release assets, including the 11 data parts and `SHA256SUMS.txt`, into the `distanceHisv_release_parts` directory.
+This command downloads only the 11 GDX data parts and their checksum file into the `distanceHisv_release_parts` directory.
 
-For private repositories, appropriate GitHub authentication and repository access permissions are required.
+Other Release assets, such as `gadm.zip`, are not downloaded by this command.
 
 ### Step 2. Reconstruct the original GDX file
 
 The 11 downloaded parts must be combined in alphabetical order to restore the original `distanceHisv_all.gdx`.
-
-The following procedures are provided separately for macOS/Linux and Windows.
 
 #### Option A. macOS and Linux
 
@@ -444,7 +523,7 @@ Open Windows PowerShell and navigate to the directory containing the downloaded 
 cd "distanceHisv_release_parts"
 ```
 
-Run the following PowerShell commands to reconstruct the original GDX file:
+Run:
 
 ```powershell
 $parts = @(Get-ChildItem -File -Filter "distanceHisv_all.gdx.part-*" | Sort-Object Name)
@@ -578,4 +657,4 @@ https://doi.org/10.6084/m9.figshare.28448249
 
 This repository is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
 
-The license applies to the original code distributed under this repository and does not automatically extend to third-party datasets or software dependencies.
+The license applies to the original code distributed under this repository and does not automatically extend to third-party datasets or software dependencies. Users must also comply with the terms and attribution requirements of external datasets.
