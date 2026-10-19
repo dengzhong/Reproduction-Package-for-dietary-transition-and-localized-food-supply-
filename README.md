@@ -1,8 +1,8 @@
-# Lower global food system emissions via integrating dietary transition and localized food supply
+# *Lower global food system emissions via integrating dietary transition and localized food supply*
 
 ## Overview
 
-This repository provides the code and supporting materials for reproducing the analyses presented in the manuscript **"Lower global food system emissions via integrating dietary transition and localized food supply"**.
+This repository provides the code and supporting materials for reproducing the analyses presented in the manuscript *"Lower global food system emissions via integrating dietary transition and localized food supply"*.
 
 The study investigates the potential of integrating localized food supply (LFS) and dietary transition strategies to reduce global food-system greenhouse gas (GHG) emissions. By combining spatial optimization, transportation network analysis, and GHG emission accounting, we evaluate the impacts of alternative food supply and dietary scenarios on food miles, food-related emissions, and transportation emissions.
 
@@ -17,10 +17,10 @@ The main analytical procedures include:
 1. **Data preparation:** Processing spatially explicit food production, consumption, and emission datasets.
 2. **Transportation network construction:** Constructing transportation resistance surfaces and estimating transport distances using road, rail, and shipping networks.
 3. **Spatial optimization:** Optimizing food allocation between production and consumption locations under different dietary and food supply scenarios.
-4. **GHG emission accounting:** Quantifying on-farm food production emissions and transportation emissions associated with optimized food flows.
+4. **GHG emission accounting:** Quantifying on-farm agricultural production emissions and transportation emissions associated with optimized food flows.
 5. **Results and visualization:** Analyzing scenario outcomes and generating the figures and supporting results.
 
-The analyses examine the localized food supply strategy under baseline dietary demands (LFS-Base) and its integration with the EAT-Lancet dietary transition (LFS-EAT).
+The analyses examine the localized food supply strategy under baseline dietary demands (*LFS-Base*) and its integration with the EAT-Lancet dietary transition (*LFS-EAT*).
 
 ### Original code archive for verification
 
