@@ -1,2 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<metadata xml:lang="zh"><Esri><CreaDate>20241106</CreaDate><CreaTime>15122400</CreaTime><ArcGISFormat>1.0</ArcGISFormat><SyncOnce>TRUE</SyncOnce><DataProperties><lineage><Process ToolSource="e:\software\arcgis\desktop10.8\ArcToolbox\Toolboxes\Conversion Tools.tbx\PolygonToRaster" Date="20241106" Time="151224">PolygonToRaster gadm36_countrylevel（无南极洲） ID_0 G:\Foodshed\countrylevel\country_ID_0.5.tif CELL_CENTER NONE 0.5</Process></lineage></DataProperties></Esri></metadata>
