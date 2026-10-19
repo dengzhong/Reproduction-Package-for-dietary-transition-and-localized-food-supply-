@@ -3,8 +3,13 @@ library(raster)
 library(dplyr)
 library(R.matlab)
 
-folder <- "G:/Foodshed/0.5by0.5"
-output_dir <- "G:/"
+if (!dir.exists("Input")) stop("Set the working directory to the Code availability project folder.")
+dir.create("Output/plots", recursive = TRUE, showWarnings = FALSE)
+if (!interactive() && grDevices::dev.cur() == 1L) grDevices::pdf("Output/plots/04_food_demand_to_gams.pdf")
+
+folder <- "Output/0.5by0.5"
+output_dir <- "Output/GAMS"
+dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 jobs <- data.frame(
   scenario = c("base", "base", "base", "eat", "eat", "eat"),
   food = c("vegetable", "cereal", "legume_nuts", "fruit", "oilcrop", "legume_nuts"),
@@ -19,7 +24,7 @@ point_demand <- raster(file.path(folder, "calib_2020_population_0.5by0.5.tif")) 
 point_production <- raster(file.path(folder, "calib_2020_point_production.tif")) %>%
   as.data.frame(xy = TRUE) %>% na.omit() %>%
   filter(prod >= 0) %>% dplyr::select(-3)
-allland <- rast("G:/Foodshed/transport/alltransport_speed_new.tif")
+allland <- rast("Output/transport/alltransport_speed_new.tif")
 allland <- ifel(allland == 19, NA, allland)
 plot(allland)
 start_index <- cellFromXY(allland, point_production)

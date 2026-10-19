@@ -3,10 +3,12 @@ library(raster)
 library(dplyr)
 library(readxl)
 
-country_file <- "G:/Foodshed/countrylevel/country_ID_0.5_newest.tif"
-population_file <- "G:/Foodshed/0.5by0.5/calib_2020_population_0.5by0.5.tif"
-statistics_dir <- "G:/Foodshed/code for foodshed"
-output_dir <- "G:/Foodshed/0.5by0.5/basic_food_demand"
+if (!dir.exists("Input")) stop("Set the working directory to the Code availability project folder.")
+
+country_file <- "Input/Other data/countrylevel/country_ID_0.5_newest.tif"
+population_file <- "Output/0.5by0.5/calib_2020_population_0.5by0.5.tif"
+statistics_dir <- "Input/Other data"
+output_dir <- "Output/0.5by0.5/basic_food_demand"
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 crop_list <- c("cereal", "root", "pulses", "nuts", "oilcrop", "sugar", "fruit", "vegetable", "stimulant")
 livestock_list <- c("Bovine", "eggs", "milk", "pig", "poultry")

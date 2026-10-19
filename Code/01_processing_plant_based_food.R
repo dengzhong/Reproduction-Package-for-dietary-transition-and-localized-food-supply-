@@ -3,11 +3,15 @@ library(raster)
 library(dplyr)
 library(readxl)
 
-spam_dir <- "G:/Foodshed/data prepare/crop/spam"
-items_dir <- file.path(spam_dir, "items")
-output_dir <- "G:/Foodshed/0.5by0.5"
-country_file <- "G:/Foodshed/countrylevel/country_ID_0.5_newest.tif"
-statistics_file <- "G:/Foodshed/code for foodshed/crop_production_demand.xlsx"
+if (!dir.exists("Input")) stop("Set the working directory to the Code availability project folder.")
+dir.create("Output/plots", recursive = TRUE, showWarnings = FALSE)
+if (!interactive() && grDevices::dev.cur() == 1L) grDevices::pdf("Output/plots/01_processing_plant_based_food.pdf")
+
+spam_dir <- "Input/SPAM data"
+items_dir <- "Output/plant"
+output_dir <- "Output/0.5by0.5"
+country_file <- "Input/Other data/countrylevel/country_ID_0.5_newest.tif"
+statistics_file <- "Input/Other data/crop_production_demand.xlsx"
 dir.create(items_dir, recursive = TRUE, showWarnings = FALSE)
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 

@@ -7,8 +7,14 @@ library(Matrix)
 library(pbapply)
 library(rhdf5)
 
+if (!dir.exists("Input")) stop("Set the working directory to the Code availability project folder.")
+dir.create("Output/plots", recursive = TRUE, showWarnings = FALSE)
+if (!interactive() && grDevices::dev.cur() == 1L) grDevices::pdf("Output/plots/03_build_resistence.pdf")
+
 partitions_to_run <- 1:9
-output_dir <- "G:/"
+output_dir <- "Output/distances"
+dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
+dir.create("Output/transport", recursive = TRUE, showWarnings = FALSE)
 partitions <- data.frame(
   first = c(1L, 5001L, 10001L, 15001L, 20001L, 25001L, 30001L, 35001L, 40001L),
   last = c(5000L, 10000L, 15000L, 20000L, 25000L, 30000L, 35000L, 40000L, 45808L),
@@ -22,24 +28,24 @@ for (part in partitions_to_run) {
 }
 
 # 1. Prepare transport speed when missing.
-if (!file.exists("G:/Foodshed/transport/alltransport_speed_new.tif")) {
-  highways <- rast("G:/Foodshed/transport/GRIP4_density_tp1/grip4_tp1_dens_m_km2.asc")
+if (!file.exists("Output/transport/alltransport_speed_new.tif")) {
+  highways <- rast("Input/Other data/transport/GRIP4_density_tp1/grip4_tp1_dens_m_km2.asc")
   highways_speed <- highways
   values(highways_speed) <- ifelse(values(highways) > 0, 100, NA)
   plot(highways_speed)
-  primaryroad <- rast("G:/Foodshed/transport/GRIP4_density_tp2/grip4_tp2_dens_m_km2.asc")
+  primaryroad <- rast("Input/Other data/transport/GRIP4_density_tp2/grip4_tp2_dens_m_km2.asc")
   primaryroad_speed <- primaryroad
   values(primaryroad_speed) <- ifelse(values(primaryroad) > 0, 80, NA)
   plot(primaryroad_speed)
-  secondaryroad <- rast("G:/Foodshed/transport/GRIP4_density_tp3/grip4_tp3_dens_m_km2.asc")
+  secondaryroad <- rast("Input/Other data/transport/GRIP4_density_tp3/grip4_tp3_dens_m_km2.asc")
   secondaryroad_speed <- secondaryroad
   values(secondaryroad_speed) <- ifelse(values(secondaryroad) > 0, 60, NA)
   plot(secondaryroad_speed)
-  tertiaryroad <- rast("G:/Foodshed/transport/GRIP4_density_tp4/grip4_tp4_dens_m_km2.asc")
+  tertiaryroad <- rast("Input/Other data/transport/GRIP4_density_tp4/grip4_tp4_dens_m_km2.asc")
   tertiaryroad_speed <- tertiaryroad
   values(tertiaryroad_speed) <- ifelse(values(tertiaryroad) > 0, 20, NA)
   plot(tertiaryroad_speed)
-  localroad <- rast("G:/Foodshed/transport/GRIP4_density_tp5/grip4_tp5_dens_m_km2.asc")
+  localroad <- rast("Input/Other data/transport/GRIP4_density_tp5/grip4_tp5_dens_m_km2.asc")
   localroad_speed <- localroad
   values(localroad_speed) <- ifelse(values(localroad) > 0, 20, NA)
   plot(localroad_speed)
@@ -47,15 +53,15 @@ if (!file.exists("G:/Foodshed/transport/alltransport_speed_new.tif")) {
   plot(road_speed)
   road_speed_0.5deg <- aggregate(road_speed, fact = 6, fun = mean, na.rm = TRUE)
   plot(road_speed_0.5deg)
-  writeRaster(road_speed_0.5deg,"G:/Foodshed/transport/road_speed_0.5deg.tif",overwrite = TRUE)
-  railroad <- rast("G:/Foodshed/transport/railroad_0.5deg.tif")
+  writeRaster(road_speed_0.5deg,"Output/transport/road_speed_0.5deg.tif",overwrite = TRUE)
+  railroad <- rast("Input/Other data/transport/railroad_0.5deg.tif")
   railroad <- terra::extend(railroad, terra::ext(-180, 180, -90, 90))
   ext(railroad) <- ext(highways)
   crs(railroad) <- crs(highways)
   railroad_speed <- railroad
   values(railroad_speed) <- ifelse(values(railroad) > 0, 24, NA)
   plot(railroad_speed)
-  shiproad <- rast("G:/Foodshed/transport/shippingnew_0.5deg.tif")
+  shiproad <- rast("Input/Other data/transport/shippingnew_0.5deg.tif")
   shiproad <- terra::extend(shiproad, terra::ext(-180, 180, -90, 90))
   ext(shiproad) <- ext(highways)
   crs(shiproad) <- crs(highways)
@@ -98,11 +104,11 @@ if (!file.exists("G:/Foodshed/transport/alltransport_speed_new.tif")) {
   combined_speed <- ifel(is.na(combined_speed) & land_mask, 5, combined_speed)
   combined_speed <- ifel(is.na(combined_speed), 10, combined_speed)
   plot(combined_speed)
-    writeRaster(combined_speed, 'G:/Foodshed/transport/alltransport_speed_new.tif', overwrite = TRUE)
+    writeRaster(combined_speed, 'Output/transport/alltransport_speed_new.tif', overwrite = TRUE)
 }
 
 # 2. Build the weighted graph and select production and demand cells.
-combined_speed <- rast('G:/Foodshed/transport/alltransport_speed_new.tif')
+combined_speed <- rast('Output/transport/alltransport_speed_new.tif')
 plot(combined_speed)
 combined_speed <- ifel(is.na(combined_speed), 10, combined_speed)
 combined_costbytime <- ifel(combined_speed == 24, 3,
@@ -121,7 +127,7 @@ distances <- rep(1, nrow(neighbors))
 times <- (distances / cell_values[neighbors[, 1]])
 distances_cost <- rep(1, nrow(neighbors))
 costs <- (distances_cost * cost_values[neighbors[, 1]])
-normalized_time <- (times-1.11) / (22.2 - 1.11)
+normalized_time <- (times-1/100) / (1/5 - 1/100)
 normalized_cost <- (costs-1) / (25 - 1)
 weight_result <- 0.5*normalized_time + 0.5*normalized_cost
 adj_matrix[cbind(neighbors[, 1], neighbors[, 2])] <- weight_result
@@ -129,17 +135,17 @@ g <- graph_from_adjacency_matrix(adj_matrix, mode = "directed", weighted = TRUE)
 
 rm(list = setdiff(ls(), c("g", "partitions", "partitions_to_run", "output_dir")))
 gc()
-point_demand <- raster('G:/Foodshed/0.5by0.5/calib_2020_population_0.5by0.5.tif') %>%
+point_demand <- raster('Output/0.5by0.5/calib_2020_population_0.5by0.5.tif') %>%
   as.data.frame(., xy = TRUE) %>%
   na.omit() %>%
   filter(pop_WB_2020 >= 500) %>%
   dplyr::select(-3)
-point_production <- raster('G:/Foodshed/0.5by0.5/calib_2020_point_production.tif') %>%
+point_production <- raster('Output/0.5by0.5/calib_2020_point_production.tif') %>%
   as.data.frame(., xy = TRUE) %>%
   na.omit() %>%
   filter(prod >= 0) %>%
   dplyr::select(-3)
-allland <- rast('G:/Foodshed/transport/alltransport_speed_new.tif')
+allland <- rast('Output/transport/alltransport_speed_new.tif')
 allland <- ifel(allland == 19, NA, allland)
 plot(allland)
 start_index <- cellFromXY(allland, point_production)

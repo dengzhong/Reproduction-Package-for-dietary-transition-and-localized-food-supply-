@@ -2,13 +2,17 @@ library(terra)
 library(raster)
 library(dplyr)
 
-source_dir <- "G:/Foodshed/data prepare/Livestock_production_systems-vVeS4eZt-/data"
-feed_dir <- "G:/Foodshed/data prepare/animal/feed"
+if (!dir.exists("Input")) stop("Set the working directory to the Code availability project folder.")
+dir.create("Output/plots", recursive = TRUE, showWarnings = FALSE)
+if (!interactive() && grDevices::dev.cur() == 1L) grDevices::pdf("Output/plots/01_processing_feed.pdf")
+
+source_dir <- "Input/Livestock Production Systems data/Livestock_production_systems-vVeS4eZt-/data"
+feed_dir <- "Output/feed"
 new_dir <- file.path(feed_dir, "new")
 grid_dir <- file.path(feed_dir, "0.5deg")
 adjust_dir <- file.path(grid_dir, "adjust")
 year_dir <- file.path(feed_dir, "2020")
-output_dir <- "G:/Foodshed/0.5by0.5/basic_feed_demand"
+output_dir <- "Output/0.5by0.5/basic_feed_demand"
 for (folder in c(feed_dir, new_dir, grid_dir, adjust_dir, year_dir, output_dir)) {
   dir.create(folder, recursive = TRUE, showWarnings = FALSE)
 }
@@ -17,7 +21,7 @@ feed_types <- data.frame(
   file = c("beef", "bvmilk", "pig", "poultry", "sgmeat", "sgmilk", "ls"),
   column = c("bvmeat", "bvmilk", "pig", "poultry", "sgmeat", "sgmilk", "ls")
 )
-ID <- rast("G:/Foodshed/mapping_name1.tif")
+ID <- rast("Input/Other data/mapping_name1.tif")
 crop_extent <- ext(ID)
 crop_crs <- crs(ID)
 
@@ -60,9 +64,9 @@ for (i in seq_len(nrow(feed_types))) {
 }
 
 # 2. Calibrate total feed to 2020.
-country_ID <-raster("G:/Foodshed/countrylevel/country_ID_0.5_newest.tif") %>%
+country_ID <-raster("Input/Other data/countrylevel/country_ID_0.5_newest.tif") %>%
   as.data.frame(xy = TRUE)
-livestock_file <- ("G:/Foodshed/data prepare/animal/feed/0.5deg/adjust/ls_grain_0.5.tif")
+livestock_file <- ("Output/feed/0.5deg/adjust/ls_grain_0.5.tif")
 livestock_2000 <- raster(livestock_file) %>%
   as.data.frame(xy = TRUE)
 livestock_2000_ID <- left_join(livestock_2000, country_ID, by = c("x", "y"))
@@ -71,7 +75,7 @@ livestock_country <- livestock_2000_ID %>%
   group_by(ISO3) %>%
   summarize(livestock = sum(livestock_2000, na.rm = TRUE) / 1000000) %>%
   filter(!is.na(ISO3))
-livestock_2020 <- read.csv('G:/Foodshed/data prepare/animal/feed/feed_total_2020.csv') %>%
+livestock_2020 <- read.csv('Input/Other data/feed_total_2020.csv') %>%
   dplyr::select(ID_0, Value) %>% filter(ID_0 != '#N/A')
 colnames(livestock_2020) <- c("ISO3", "Value")
 livestock_2020$ISO3 <- as.numeric(livestock_2020$ISO3)
@@ -84,15 +88,15 @@ livestock_2020_tif <- left_join(livestock_2000_ID, livestock_country, by = "ISO3
   mutate(livestock_2020 = livestock_2000 / 1000000 * conver) %>%
   dplyr::select(x, y, livestock_2020)
 livestock_2020_tif_new <- rast(livestock_2020_tif)
-country_ID <-rast("G:/Foodshed/countrylevel/country_ID_0.5_newest.tif")
+country_ID <-rast("Input/Other data/countrylevel/country_ID_0.5_newest.tif")
 crop_extent <- ext(country_ID)
 crop_crs <- crs(country_ID)
 ext(livestock_2020_tif_new) <- crop_extent
 crs(livestock_2020_tif_new) <- crop_crs
-writeRaster(livestock_2020_tif_new, "G:/Foodshed/data prepare/animal/feed/2020/ls_feed_2020.tif", overwrite = TRUE)
-country_ID <-raster("G:/Foodshed/countrylevel/country_ID_0.5_newest.tif") %>%
+writeRaster(livestock_2020_tif_new, "Output/feed/2020/ls_feed_2020.tif", overwrite = TRUE)
+country_ID <-raster("Input/Other data/countrylevel/country_ID_0.5_newest.tif") %>%
   as.data.frame(xy = TRUE)
-ls_2020 <- raster("G:/Foodshed/data prepare/animal/feed/2020/ls_feed_2020.tif") %>%
+ls_2020 <- raster("Output/feed/2020/ls_feed_2020.tif") %>%
   as.data.frame(xy = TRUE)
 ls_2020_ID <- left_join(ls_2020, country_ID, by = c("x", "y"))
 colnames(ls_2020_ID) <- c("x", "y", "ls_2020", "ISO3")
@@ -102,9 +106,9 @@ ls_2020_country <- ls_2020_ID %>%
   filter(!is.na(ISO3))
 
 # 3. Split total feed into crop and oil contributions.
-country_ID <-raster("G:/Foodshed/countrylevel/country_ID_0.5_newest.tif") %>%
+country_ID <-raster("Input/Other data/countrylevel/country_ID_0.5_newest.tif") %>%
   as.data.frame(xy = TRUE)
-ls_2020 <- raster("G:/Foodshed/data prepare/animal/feed/2020/ls_feed_2020.tif") %>%
+ls_2020 <- raster("Output/feed/2020/ls_feed_2020.tif") %>%
   as.data.frame(xy = TRUE)
 ls_2020_ID <- left_join(ls_2020, country_ID, by = c("x", "y"))
 colnames(ls_2020_ID) <- c("x", "y", "ls_2020", "ISO3")
@@ -112,7 +116,7 @@ ls_2020_country <- ls_2020_ID %>%
   group_by(ISO3) %>%
   summarize(ls = sum(ls_2020, na.rm = TRUE)) %>%
   filter(!is.na(ISO3))
-ratio_2020 <- read.csv('G:/Foodshed/data prepare/animal/feed/feed_fodder_ratio_2020.csv') %>%
+ratio_2020 <- read.csv('Input/Other data/feed_fodder_ratio_2020.csv') %>%
   dplyr::select(ID_0, Crop,Oil)
 colnames(ratio_2020) <- c("ISO3", "Crop","Oil")
 ls_2020_country <- left_join(ls_2020_country, ratio_2020, by = "ISO3")
@@ -124,18 +128,18 @@ Oil_feed_2020_tif <- left_join(ls_2020_ID, ls_2020_country, by = "ISO3") %>%
   dplyr::select(x, y, Oil_feed)
 Oil_feed_2020_tif_new <- rast(Oil_feed_2020_tif)
 Crop_feed_2020_tif_new <- rast(crop_feed_2020_tif)
-country_ID <-rast("G:/Foodshed/countrylevel/country_ID_0.5_newest.tif")
+country_ID <-rast("Input/Other data/countrylevel/country_ID_0.5_newest.tif")
 crop_extent <- ext(country_ID)
 crop_crs <- crs(country_ID)
 ext(Oil_feed_2020_tif_new) <- crop_extent
 crs(Oil_feed_2020_tif_new) <- crop_crs
 ext(Crop_feed_2020_tif_new) <- crop_extent
 crs(Crop_feed_2020_tif_new) <- crop_crs
-writeRaster(Crop_feed_2020_tif_new, "G:/Foodshed/data prepare/animal/feed/2020/Crop_feed_2020.tif", overwrite = TRUE)
-writeRaster(Oil_feed_2020_tif_new, "G:/Foodshed/data prepare/animal/feed/2020/Oil_feed_2020.tif", overwrite = TRUE)
-country_ID <-raster("G:/Foodshed/countrylevel/country_ID_0.5_newest.tif") %>%
+writeRaster(Crop_feed_2020_tif_new, "Output/feed/2020/Crop_feed_2020.tif", overwrite = TRUE)
+writeRaster(Oil_feed_2020_tif_new, "Output/feed/2020/Oil_feed_2020.tif", overwrite = TRUE)
+country_ID <-raster("Input/Other data/countrylevel/country_ID_0.5_newest.tif") %>%
   as.data.frame(xy = TRUE)
-Crop_2020 <- raster("G:/Foodshed/data prepare/animal/feed/2020/Crop_feed_2020.tif") %>%
+Crop_2020 <- raster("Output/feed/2020/Crop_feed_2020.tif") %>%
   as.data.frame(xy = TRUE)
 Crop_2020_ID <- left_join(Crop_2020, country_ID, by = c("x", "y"))
 colnames(Crop_2020_ID) <- c("x", "y", "Crop_2020", "ISO3")

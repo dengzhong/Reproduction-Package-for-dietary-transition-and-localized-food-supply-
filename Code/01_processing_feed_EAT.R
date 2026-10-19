@@ -1,7 +1,11 @@
 library(terra)
 library(raster)
 
-folder <- "G:/Foodshed/0.5by0.5"
+if (!dir.exists("Input")) stop("Set the working directory to the Code availability project folder.")
+dir.create("Output/plots", recursive = TRUE, showWarnings = FALSE)
+if (!interactive() && grDevices::dev.cur() == 1L) grDevices::pdf("Output/plots/01_processing_feed_EAT.pdf")
+
+folder <- "Output/0.5by0.5"
 output_dir <- file.path(folder, "EAT_feed_demand")
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 food_types <- c("Bovine", "milk", "pig", "poultry")
