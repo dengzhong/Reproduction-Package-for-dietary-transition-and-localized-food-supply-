@@ -136,7 +136,7 @@ The GPWv4 Beta release is archived separately from the subsequent Version 4.0 re
 3. Extract the downloaded archive, where applicable.
 4. Place the extracted raster files in the following directory within this repository:
 
-`Input/GPWv4 population data/`
+`Other data/population/`
 
 Preserve the original filenames and spatial reference information required by the data-processing scripts.
 
