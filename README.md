@@ -106,6 +106,48 @@ The current SPAM dataset page lists Version 2.0, Release 2:
 
 Version 2.0 should not be substituted for Version 1.0 when reproducing the original analysis, because revisions to the underlying spatial production estimates may affect the results. Users should obtain Version 1.0 from the historical dataset record linked above.
 
+### 3. Gridded Population of the World (GPWv4) population data
+
+Gridded population data were obtained from the **Gridded Population of the World, Version 4 (GPWv4)** dataset developed by the NASA Socioeconomic Data and Applications Center (SEDAC).
+
+**Data source:**
+
+[GPWv4 — Socioeconomic Data and Applications Center (SEDAC)](https://sedac.ciesin.columbia.edu/data/collection/gpw-v4)
+
+#### 3.1. Data used in this study
+
+This study uses gridded population data to represent the spatial distribution of population.
+
+The archived GPWv4 Beta release provides the following population-related datasets:
+
+- **Population Count:** [https://doi.org/10.7927/H4BG2KXS](https://doi.org/10.7927/H4BG2KXS)
+- **UN-Adjusted Population Count:** [https://doi.org/10.7927/H4PR7SX1](https://doi.org/10.7927/H4PR7SX1)
+- **Population Density:** [https://doi.org/10.7927/H46T0JKB](https://doi.org/10.7927/H46T0JKB)
+- **UN-Adjusted Population Density:** [https://doi.org/10.7927/H4TH8JNR](https://doi.org/10.7927/H4TH8JNR)
+
+For population-count grids, use the **Population Count** dataset corresponding to the original input data. Do not substitute population density or UN-adjusted population count unless that is the variable used by the original analysis.
+
+The GPWv4 Beta release is archived separately from the subsequent Version 4.0 release. The two releases differ in certain datasets and country-level population estimates.
+
+#### 3.2. Data preparation instructions
+
+1. Open the [archived GPWv4 Beta Population Count dataset](https://doi.org/10.7927/H4BG2KXS).
+2. Download the gridded population-count data required by the analysis.
+3. Extract the downloaded archive, where applicable.
+4. Place the extracted raster files in the following directory within this repository:
+
+`Input/GPWv4 population data/`
+
+Preserve the original filenames and spatial reference information required by the data-processing scripts.
+
+#### 3.3. Version and reproducibility
+
+The GPWv4 Beta release was made available before the subsequent Version 4.0 release. According to the June 2016 Version 4.0 release notes, changes included revisions to Egypt's administrative boundaries and population estimates, corrections to data integration for Panama and Poland, and the addition of new datasets.
+
+The Beta population-count data are available through the archived DOI listed above. Users reproducing the original analysis should use the same GPWv4 release and population variable as the original input data rather than automatically substituting the later Version 4.0 release.
+
+The release notes and information on the Beta archive are available through the [GPWv4 data documentation](https://sedac.ciesin.columbia.edu/data/collection/gpw-v4).
+
 ## Code and reproducibility
 
 The computational framework primarily uses **R and GAMS** for data processing, spatial analysis, optimization, emission accounting, and visualization.
@@ -145,9 +187,9 @@ Additional R package dependencies and implementation details can be identified f
 
 ## Data availability
 
-The analyses draw on spatially explicit agricultural production, food consumption, transportation network, and GHG emission datasets.
+The analyses draw on spatially explicit agricultural production, food consumption, population, transportation network, and GHG emission datasets.
 
-The livestock production and grain-based feed consumption data are available through the [CSIRO Data Access Portal](https://data.csiro.au/collection/csiro:29893). The crop production data used in this study are from SPAM 2020 Version 1.0, as documented in the Data preparation section.
+The livestock production and grain-based feed consumption data are available through the [CSIRO Data Access Portal](https://data.csiro.au/collection/csiro:29893). The crop production data used in this study are from SPAM 2020 Version 1.0, as documented in the Data preparation section. The gridded population data are available through the archived GPWv4 Beta dataset records.
 
 To facilitate reproducibility, the large GAMS input dataset `distanceHisv_all.gdx`, containing spatial distance information used in the food allocation optimization, is provided through GitHub Releases.
 
