@@ -8,26 +8,26 @@ option Threads = 1;
 
 set i_pig  pig production point
 /
-$include G:/for gams/pig_production_set.inc
+$include "/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/pig_production_set.inc"
 /;
 
 set j_pig  pig demand point
 /
-$include G:/for gams/pig_demand_set.inc
+$include "/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/pig_demand_set.inc"
 /;
 
 
 
 
 Parameter pig_production(i_pig) 'capacity of plant i in cases';
-execute_load 'G:\Foodshed\for gams\pig_production.gdx', pig_production;
+execute_load '/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/pig_production.gdx', pig_production;
 
 Parameter pig_demand(j_pig) 'demand markets';
-execute_load 'G:\Foodshed\for gams\pig_demand.gdx', pig_demand;
+execute_load '/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/pig_demand.gdx', pig_demand;
 
 
 Parameter distances(i_pig,j_pig) 'distance in kilometer';
-execute_load 'G:\Foodshed\for gams\distanceHisv_all.gdx', distances;
+execute_load '/Users/zhongcideng/Desktop/Code availability/Output/GAMS/distanceHisv_all.gdx', distances;
 
 
 Variable
@@ -51,6 +51,6 @@ Model transport / all /;
 
 solve transport using lp minimizing z;
 
-execute_unload "pig_disHarv.gdx";
+execute_unload "/Users/zhongcideng/Desktop/Code availability/Output/GAMS/optimize result/pig_disHarv.gdx";
 
 

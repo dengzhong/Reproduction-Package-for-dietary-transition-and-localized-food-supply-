@@ -8,24 +8,24 @@ option Threads = 1;
 
 set i_oilcrop  oilcrop production point
 /
-$include G:/oilcrop_production_set.inc
+$include "/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/oilcrop_production_set.inc"
 /;
 
 set j_oilcrop  oilcrop demand point
 /
-$include G:/oilcrop_demand_set.inc
+$include "/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/oilcrop_demand_set.inc"
 /;
 
 
 Parameter oilcrop_production(i_oilcrop) 'capacity of plant i in cases';
-execute_load 'G:\Foodshed\for gams\oilcrop_production.gdx', oilcrop_production;
+execute_load '/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/oilcrop_production.gdx', oilcrop_production;
 
 Parameter oilcrop_demand(j_oilcrop) 'demand markets';
-execute_load 'G:\Foodshed\for gams\oilcrop_demand.gdx', oilcrop_demand;
+execute_load '/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/oilcrop_demand.gdx', oilcrop_demand;
 
 
 Parameter distances(i_oilcrop,j_oilcrop) 'distance in kilometer';
-execute_load 'G:\Foodshed\for gams\distanceHisv_all.gdx', distances;
+execute_load '/Users/zhongcideng/Desktop/Code availability/Output/GAMS/distanceHisv_all.gdx', distances;
 
 
 
@@ -52,4 +52,4 @@ Model transport / all /;
 
 solve transport using lp minimizing z;
 
-execute_unload "G:\Foodshed\for gams\optimize result\oilcrop_disHarv.gdx";
+execute_unload "/Users/zhongcideng/Desktop/Code availability/Output/GAMS/optimize result/oilcrop_disHarv.gdx";

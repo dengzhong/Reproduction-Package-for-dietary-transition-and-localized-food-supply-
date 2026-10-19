@@ -8,26 +8,26 @@ option Threads = 1;
 
 set i_root  root production point
 /
-$include G:/root_production_set.inc
+$include "/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/root_production_set.inc"
 /;
 
 set j_root  root demand point
 /
-$include G:/root_demand_set.inc
+$include "/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/root_demand_set.inc"
 /;
 
 
 
 
 Parameter root_production(i_root) 'capacity of plant i in cases';
-execute_load 'G:\Foodshed\for gams\root_production.gdx', root_production;
+execute_load '/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/root_production.gdx', root_production;
 
 Parameter root_demand(j_root) 'demand markets';
-execute_load 'G:\Foodshed\for gams\root_demand.gdx', root_demand;
+execute_load '/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/root_demand.gdx', root_demand;
 
 
 Parameter distances(i_root,j_root) 'distance in kilometer';
-execute_load 'G:\Foodshed\for gams\distanceHisv_all.gdx', distances;
+execute_load '/Users/zhongcideng/Desktop/Code availability/Output/GAMS/distanceHisv_all.gdx', distances;
 
 
 
@@ -52,4 +52,4 @@ Model transport / all /;
 
 solve transport using lp minimizing z;
 
-execute_unload "G:\Foodshed\for gams\optimize result\root_disHarv.gdx";
+execute_unload "/Users/zhongcideng/Desktop/Code availability/Output/GAMS/optimize result/root_disHarv.gdx";

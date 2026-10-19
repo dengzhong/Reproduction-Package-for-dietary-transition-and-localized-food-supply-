@@ -8,26 +8,26 @@ option Threads = 1;
 
 set i_poultry  poultry production point
 /
-$include G:/poultry_production_set.inc
+$include "/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/poultry_production_set.inc"
 /;
 
 set j_poultry  poultry demand point
 /
-$include G:/poultry_demand_set.inc
+$include "/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/poultry_demand_set.inc"
 /;
 
 
 
 
 Parameter poultry_production(i_poultry) 'capacity of plant i in cases';
-execute_load 'G:\Foodshed\for gams\poultry_production.gdx', poultry_production;
+execute_load '/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/poultry_production.gdx', poultry_production;
 
 Parameter poultry_demand(j_poultry) 'demand markets';
-execute_load 'G:\Foodshed\for gams\poultry_demand.gdx', poultry_demand;
+execute_load '/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/poultry_demand.gdx', poultry_demand;
 
 
 Parameter distances(i_poultry,j_poultry) 'distance in kilometer';
-execute_load 'G:\Foodshed\for gams\distanceHisv_all.gdx', distances;
+execute_load '/Users/zhongcideng/Desktop/Code availability/Output/GAMS/distanceHisv_all.gdx', distances;
 
 
 
@@ -52,4 +52,4 @@ Model transport / all /;
 
 solve transport using lp minimizing z;
 
-execute_unload "G:\Foodshed\for gams\optimize result\poultry_disHarv.gdx";
+execute_unload "/Users/zhongcideng/Desktop/Code availability/Output/GAMS/optimize result/poultry_disHarv.gdx";

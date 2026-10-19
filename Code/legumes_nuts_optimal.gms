@@ -8,26 +8,26 @@ option Threads = 0;
 
 set i_legume_nuts  legume_nuts production point
 /
-$include G:/legume_nuts_production_set.inc
+$include "/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/legume_nuts_production_set.inc"
 /;
 
 set j_legume_nuts  legume_nuts demand point
 /
-$include G:/legume_nuts_demand_set.inc
+$include "/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/legume_nuts_demand_set.inc"
 /;
 
 
 
 
 Parameter legume_nuts_production(i_legume_nuts) 'capacity of plant i in cases';
-execute_load 'G:\Foodshed\for gams\legume_nuts_production.gdx', legume_nuts_production;
+execute_load '/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/legume_nuts_production.gdx', legume_nuts_production;
 
 Parameter legume_nuts_demand(j_legume_nuts) 'demand markets';
-execute_load 'G:\Foodshed\for gams\legume_nuts_demand.gdx', legume_nuts_demand;
+execute_load '/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/legume_nuts_demand.gdx', legume_nuts_demand;
 
 
 Parameter distances(i_legume_nuts,j_legume_nuts) 'distance in kilometer';
-execute_load 'G:\Foodshed\for gams\distanceHisv_all.gdx', distances;
+execute_load '/Users/zhongcideng/Desktop/Code availability/Output/GAMS/distanceHisv_all.gdx', distances;
 
 
 
@@ -52,4 +52,4 @@ Model transport / all /;
 
 solve transport using lp minimizing z;
 
-execute_unload "G:\Foodshed\for gams\optimize result\legume_nuts_disHarv.gdx";
+execute_unload "/Users/zhongcideng/Desktop/Code availability/Output/GAMS/optimize result/legume_nuts_disHarv.gdx";

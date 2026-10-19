@@ -8,26 +8,26 @@ option Threads = 1;
 
 set i_milk  milk production point
 /
-$include G:/milk_production_set.inc
+$include "/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/milk_production_set.inc"
 /;
 
 set j_milk  milk demand point
 /
-$include G:/milk_demand_set.inc
+$include "/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/milk_demand_set.inc"
 /;
 
 
 
 
 Parameter milk_production(i_milk) 'capacity of plant i in cases';
-execute_load 'G:\Foodshed\for gams\milk_production.gdx', milk_production;
+execute_load '/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/milk_production.gdx', milk_production;
 
 Parameter milk_demand(j_milk) 'demand markets';
-execute_load 'G:\Foodshed\for gams\milk_demand.gdx', milk_demand;
+execute_load '/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/milk_demand.gdx', milk_demand;
 
 
 Parameter distances(i_milk,j_milk) 'distance in kilometer';
-execute_load 'G:\Foodshed\for gams\distanceHisv_all.gdx', distances;
+execute_load '/Users/zhongcideng/Desktop/Code availability/Output/GAMS/distanceHisv_all.gdx', distances;
 
 
 
@@ -52,4 +52,4 @@ Model transport / all /;
 
 solve transport using lp minimizing z;
 
-execute_unload "G:\Foodshed\for gams\optimize result\milk_disHarv.gdx";
+execute_unload "/Users/zhongcideng/Desktop/Code availability/Output/GAMS/optimize result/milk_disHarv.gdx";

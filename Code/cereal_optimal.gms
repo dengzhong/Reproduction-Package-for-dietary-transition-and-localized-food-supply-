@@ -8,26 +8,26 @@ option Threads = 1;
 
 set i_cereal  cereal production point
 /
-$include G:/cereal_production_set.inc
+$include "/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/cereal_production_set.inc"
 /;
 
 set j_cereal  cereal demand point
 /
-$include G:/cereal_demand_set.inc
+$include "/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/cereal_demand_set.inc"
 /;
 
 
 
 
 Parameter cereal_production(i_cereal) 'capacity of plant i in cases';
-execute_load 'G:\Foodshed\for gams\cereal_production.gdx', cereal_production;
+execute_load '/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/cereal_production.gdx', cereal_production;
 
 Parameter cereal_demand(j_cereal) 'demand markets';
-execute_load 'G:\Foodshed\for gams\cereal_demand.gdx', cereal_demand;
+execute_load '/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/cereal_demand.gdx', cereal_demand;
 
 
 Parameter distances(i_cereal,j_cereal) 'distance in kilometer';
-execute_load 'G:\Foodshed\for gams\distanceHisv_all.gdx', distances;
+execute_load '/Users/zhongcideng/Desktop/Code availability/Output/GAMS/distanceHisv_all.gdx', distances;
 
 
 
@@ -52,4 +52,4 @@ Model transport / all /;
 
 solve transport using lp minimizing z;
 
-execute_unload "cereal_disHarv.gdx";
+execute_unload "/Users/zhongcideng/Desktop/Code availability/Output/GAMS/optimize result/cereal_disHarv.gdx";
