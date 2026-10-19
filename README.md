@@ -9,6 +9,69 @@ The study investigates the potential of integrating localized food supply (LFS) 
 
 The analysis considers spatially explicit food production and consumption, transportation infrastructure, regional production capacities, and alternative dietary demands.
 
+## Data preparation
+
+### 1. Livestock Production Systems data
+
+The spatially explicit livestock production and grain-based feed consumption data were obtained from the **Livestock Production Systems** dataset available through the CSIRO Data Access Portal.
+
+**Data source:**
+
+[Livestock Production Systems — CSIRO Data Access Portal](https://data.csiro.au/collection/csiro:29893)
+
+To reproduce the analysis, download the following 14 ZIP archives, comprising seven livestock production datasets and seven grain-based feed consumption datasets.
+
+#### 1.1. Livestock production data
+
+Download the following seven files:
+
+1. `bvmeat_kg.zip`
+2. `bvmilk_kg.zip`
+3. `pimeat_kg.zip`
+4. `poeggs_kg.zip`
+5. `pomeat_kg.zip`
+6. `sgmeat_kg.zip`
+7. `sgmilk_kg.zip`
+
+These datasets provide spatially explicit livestock production information for the corresponding livestock product categories.
+
+#### 1.2. Grain-based feed consumption data
+
+Download the following seven files:
+
+1. `bvmeat_grai.zip`
+2. `bvmilk_grai.zip`
+3. `ls_grai.zip`
+4. `pimeat_grai.zip`
+5. `po_grai.zip`
+6. `sgmeat_grai.zip`
+7. `sgmilk_grai.zip`
+
+These datasets provide spatially explicit estimates of grain biomass consumption associated with livestock production, expressed in kg/km²/year.
+
+#### 1.3. Data preparation instructions
+
+1. Open the [CSIRO dataset page](https://data.csiro.au/collection/csiro:29893).
+2. Download all 14 ZIP archives listed in Sections 1.1 and 1.2.
+3. Extract the downloaded archives.
+4. Place the extracted files in the following directory within this repository:
+
+```text
+Input/Livestock Production Systems data/
+```
+
+The input directory should be organized as follows:
+
+```text
+Input/
+├── GAMS input/
+└── Livestock Production Systems data/
+    ├── [Extracted livestock production files]
+    └── [Extracted grain-based feed consumption files]
+```
+
+All required files from both groups should be placed in the `Livestock Production Systems data` directory. Preserve their original filenames and associated files to ensure compatibility with the subsequent data-processing scripts.
+
 ## Code and reproducibility
 
 The computational framework primarily uses **R and GAMS** for data processing, spatial analysis, optimization, emission accounting, and visualization.
@@ -51,6 +114,8 @@ Additional R package dependencies and implementation details can be identified f
 The analyses draw on spatially explicit agricultural production, food consumption, transportation network, and GHG emission datasets.
 
 Due to the size of the datasets and potential third-party data restrictions, some original input datasets may not be directly included in the main GitHub repository.
+
+The livestock production and grain-based feed consumption datasets can be obtained from the CSIRO Data Access Portal, as described in the Data preparation section.
 
 To facilitate reproducibility, the large GAMS input dataset `distanceHisv_all.gdx`, containing spatial distance information used in the food allocation optimization, is provided through GitHub Releases.
 
@@ -120,6 +185,8 @@ Authenticate with GitHub if necessary:
 ```bash
 gh auth login
 ```
+
+Alternatively, a properly authorized GitHub personal access token can be provided through the `GH_TOKEN` environment variable.
 
 Then execute the following command in a terminal or Windows PowerShell:
 
@@ -256,7 +323,7 @@ Open PowerShell in the directory containing the reconstructed GDX file and `SHA2
 Execute:
 
 ```powershell
-$expected = (Get-Content "SHA256SUMS.txt" | Select-Object -First 1).Split(' ')[0].ToLowerInvariant()
+$expected = ((Get-Content "SHA256SUMS.txt" -TotalCount 1) -split '\s+')[0].ToLowerInvariant()
 
 $actual = (Get-FileHash "distanceHisv_all.gdx" -Algorithm SHA256).Hash.ToLowerInvariant()
 
