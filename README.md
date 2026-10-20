@@ -440,6 +440,8 @@ The downloaded datasets should retain the filenames and directory structures exp
 
 ## 3. Code and reproducibility
 
+Parameter definitions, input fields, identifiers, units and output structures are documented in the [parameter descriptions and data dictionary](Documentation/README.md).
+
 The computational framework primarily uses **R and GAMS** for data processing, spatial analysis, optimization, emission accounting, and visualization.
 
 The main analytical procedures include:
