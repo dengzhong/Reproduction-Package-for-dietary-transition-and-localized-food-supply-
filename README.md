@@ -1061,7 +1061,7 @@ A reproducible [synthetic-network demonstration](Demo/transport_network_demo.R) 
 
 The demonstration checks that resistance increases with relative cost at fixed travel time and with travel time at fixed cost. For three origin–destination pairs, it independently sums the source-cell resistance along each calculated path and compares the sum with the weighted shortest-path result. All three comparisons agree within the specified numerical tolerance, and none of the selected paths crosses a penalized cell.
 
-![Synthetic transport-network validation showing network classes, relative cost, travel time and minimum-resistance paths](Demo/Supplementary_Figure_X_4panel_paper_ranges.png)
+![Synthetic transport-network validation showing network classes, relative cost, travel time and minimum-resistance paths](Demo/Supplementary_Figure_X_4panel.png)
 
 **Synthetic transport-network validation.** **a**, Network classes. **b**, Relative transport cost. **c**, Travel time calculated as inverse speed. **d**, Minimum-resistance paths from origin O to destinations D1–D3. Costs above 25 are displayed at the upper colour limit in panel b; the full cost of 100 remains in the calculations. The resistance background in panel d is capped at 1 for visualization only. Colours and labels show cumulative path resistance, rather than geographic distance.
 
@@ -1079,7 +1079,7 @@ install.packages(c("igraph", "ggplot2", "Matrix", "patchwork", "scales"))
 source("Demo/transport_network_demo.R")
 ```
 
-The script uses the fixed seed `20261010` and writes its outputs to `Demo/`. The supplied [PDF figure](Demo/Supplementary_Figure_X_4panel_paper_ranges.pdf) and individual panel PNG files accompany the combined image. Numerical outputs comprise:
+The script uses the fixed seed `20261010` and writes its outputs to `Demo/`. A [PDF version](Demo/Supplementary_Figure_X_4panel.pdf) accompanies the combined image. Numerical outputs comprise:
 
 - [Grid speed, cost and resistance](Demo/grid_speed_cost_resistance.csv): cell identifiers, coordinates, network classes and resistance inputs.
 - [Route validation](Demo/route_validation.csv): cumulative resistance, independent verification errors and penalized-cell counts.
