@@ -1,0 +1,56 @@
+$ Title eggss for foodshed; Nov 4, 2024 @Copyright Huazhong Agricultural university Zhongci Deng
+
+
+Option LP = CONOPT4;
+option Threads = 0;
+
+
+
+set i_eggs  eggs production point
+/
+$include "/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/Country-level/eggs_production_set.inc"
+/;
+
+set j_eggs  eggs demand point
+/
+$include "/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/Country-level/eggs_demand_set.inc"
+/;
+
+
+
+Parameter eggs_production(i_eggs) 'capacity of plant i in cases';
+execute_load '/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/Country-level/eggs_production.gdx', eggs_production;
+
+Parameter eggs_demand(j_eggs) 'demand markets';
+execute_load '/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/Country-level/halfEAT_eggs_demand.gdx', eggs_demand;
+
+
+Parameter dist_new(i_eggs,j_eggs) 'distance in kilometer';
+execute_load '/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/Country-level/dist_new.gdx', dist_new;
+
+Variable
+   x(i_eggs,j_eggs) 'shipment quantities in cases'
+   z      'total transportation disttance in kilometer';
+   
+Positive Variable x;
+
+Equation
+   d         'define objective function'
+   supply(i_eggs) 'observe supply limit at plant i'
+   demand(j_eggs) 'satisfy demand at market j';
+
+d..
+    z =e= sum((i_eggs,j_eggs), dist_new(i_eggs,j_eggs)*x(i_eggs,j_eggs));
+
+supply(i_eggs)..
+    sum(j_eggs, x(i_eggs,j_eggs)) =l= eggs_production(i_eggs);
+
+demand(j_eggs)..
+    sum(i_eggs, x(i_eggs,j_eggs)) =e= eggs_demand(j_eggs);
+
+Model transport / all /;
+
+solve transport using lp minimizing z;
+
+execute_unload "/Users/zhongcideng/Desktop/Code availability/Output/GAMS/Country-level/optimize result/Mindist_halfEAT_eggs_countrylevel.gdx";
+
