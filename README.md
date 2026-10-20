@@ -77,6 +77,7 @@ Zhongci Deng<sup>1,8</sup>, Cai Li<sup>2,8</sup>, Yuanchao Hu<sup>3</sup>, Praja
   - [7.2. Prepare the working directory and software](#72-prepare-the-working-directory-and-software)
   - [7.3. Run preprocessing](#73-run-preprocessing)
   - [7.4. Prepare GAMS inputs and run optimization](#74-prepare-gams-inputs-and-run-optimization)
+    - [7.4.1. Validation of transport-network path selection](#741-validation-of-transport-network-path-selection)
   - [7.5. Model dimensions and optimization results](#75-model-dimensions-and-optimization-results)
   - [7.6. Run LFS-Base post-processing](#76-run-lfs-base-post-processing)
   - [7.7. Run country-level sensitivity analyses](#77-run-country-level-sensitivity-analyses)
@@ -1054,9 +1055,42 @@ After each solve, inspect the GAMS listing for the solver/model status and confi
 
 For the separate country-level sensitivity workflow, see Section 7.7.
 
+#### 7.4.1. Validation of transport-network path selection
+
+A reproducible [synthetic-network demonstration](Demo/transport_network_demo.R) verifies the increasing resistance transformation and its use in shortest-path calculation. The hypothetical 100 × 100 grid contains land corridors, railways, 20 shipping routes and high-cost cells. It uses the same normalization expressions and source-cell edge-weight construction as the transport-network scripts. The spatial arrangement and illustrative speeds are synthetic rather than observed geography.
+
+The demonstration checks that resistance increases with relative cost at fixed travel time and with travel time at fixed cost. For three origin–destination pairs, it independently sums the source-cell resistance along each calculated path and compares the sum with the weighted shortest-path result. All three comparisons agree within the specified numerical tolerance, and none of the selected paths crosses a penalized cell.
+
+![Synthetic transport-network validation showing network classes, relative cost, travel time and minimum-resistance paths](Demo/Supplementary_Figure_X_4panel_paper_ranges.png)
+
+**Synthetic transport-network validation.** **a**, Network classes. **b**, Relative transport cost. **c**, Travel time calculated as inverse speed. **d**, Minimum-resistance paths from origin O to destinations D1–D3. Costs above 25 are displayed at the upper colour limit in panel b; the full cost of 100 remains in the calculations. The resistance background in panel d is capped at 1 for visualization only. Colours and labels show cumulative path resistance, rather than geographic distance.
+
+| Route | Path cells | Cumulative resistance | Absolute verification error | Penalized cells traversed |
+|---|---:|---:|---:|---:|
+| O–D1 | 88 | 13.3905502392345 | 0 | 0 |
+| O–D2 | 116 | 16.6587131704860 | 0 | 0 |
+| O–D3 | 81 | 11.8947368421053 | 0 | 0 |
+
+Run the demonstration from the repository root in R:
+
+```r
+# Install once if required.
+install.packages(c("igraph", "ggplot2", "Matrix", "patchwork", "scales"))
+source("Demo/transport_network_demo.R")
+```
+
+The script uses the fixed seed `20261010` and writes its outputs to `Demo/`. The supplied [PDF figure](Demo/Supplementary_Figure_X_4panel_paper_ranges.pdf) and individual panel PNG files accompany the combined image. Numerical outputs comprise:
+
+- [Grid speed, cost and resistance](Demo/grid_speed_cost_resistance.csv): cell identifiers, coordinates, network classes and resistance inputs.
+- [Route validation](Demo/route_validation.csv): cumulative resistance, independent verification errors and penalized-cell counts.
+- [Calculated paths](Demo/three_shortest_paths.csv): ordered cells traversed by each route.
+- [Shipping-route definitions](Demo/twenty_shipping_routes.csv): route identifiers and associated cell identifiers.
+
+This demonstration tests resistance normalization, edge construction and path selection. Its values describe the synthetic test network rather than the global optimization results.
+
 ### 7.5. Model dimensions and optimization results
 
-The table below summarizes the 11 archived LFS-Base runs in `Output/GAMS/logs/`, implemented in GAMS 41.4.0 using CPLEX 22.1.0.0. All runs reported LP status 1 (optimal) and normal job completion. A [machine-readable summary](Documentation/solver_summary.csv) provides the extracted values and source log filenames.
+The table below summarizes the 11 archived LFS-Base runs in `Output/GAMS/logs/`, implemented in GAMS 41.4.0 using CPLEX 22.1.0.0. All runs reported LP status 1 (optimal) and normal job completion. Each food-category link below opens its source log.
 
 Model dimensions correspond to the generated GAMS model **before CPLEX presolve**. The variable count includes the objective variable, and the equation count includes the objective equation and any additional equations present in the archived run. These counts describe model dimensions, rather than the number of origin–destination pairs carrying positive shipments.
 
@@ -1074,7 +1108,7 @@ Model dimensions correspond to the generated GAMS model **before CPLEX presolve*
 | [root](Output/GAMS/logs/root_optimal.log) | 504,892,466 | 46,323 | Optimal | 4,071.42 | 3.536 |
 | [vegetable](Output/GAMS/logs/vegetable_optimal.log) | 456,518,329 | 44,642 | Optimal | 5,582.23 | 3.682 |
 
-CPLEX time is the solver-reported optimization time; total elapsed time is the GAMS job duration, including compilation, data loading, model generation, optimization and result export. The CSV retains elapsed seconds at the precision available in the logs. This table summarizes archived runs; it does not report new solves of the reorganized scripts.
+CPLEX time is the solver-reported optimization time; total elapsed time is the GAMS job duration, including compilation, data loading, model generation, optimization and result export. This table summarizes archived runs; it does not report new solves of the reorganized scripts.
 
 
 ### 7.6. Run LFS-Base post-processing
