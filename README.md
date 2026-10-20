@@ -743,6 +743,10 @@ library(gdxrrw)
 igdx("/path/to/GAMS/system/directory")
 ```
 
+Before starting, choose the spatial resolution, dietary scenario and optimization objective. There are two supported entry points: (1) run the R preprocessing to rebuild spatial intermediates, then use the supplied optimization inputs; or (2) run GAMS directly using the supplied GDX/INC files. The second entry point reproduces the optimization without rerunning the R preprocessing. For grid-level post-processing, the population, production-location and transport rasters are still required.
+
+Keep `Input/` for supplied or downloaded data and `Output/` for generated files. Run the R commands below in the repository root, not inside `Code/`. Scripts with the same numeric prefix must all be identified by their full filenames.
+
 The GAMS files currently contain absolute paths. Replace the project prefix `/Users/zhongcideng/Desktop/Code availability/` with the absolute path to your local repository before running them. Keep the remaining input and output subdirectories unchanged. Use the solver specified in each model: the grid-level models use CPLEX, while the country-level models currently specify CONOPT4.
 
 ### 6.3. Run preprocessing
@@ -762,7 +766,22 @@ source("Code/03_build_resistence.R")
 source("Code/04_food_demand_to_gams.R")
 ```
 
-The main outputs are calibrated production and population rasters, food/feed demand rasters, the production-location raster, the transport-speed raster, nine H5 distance partitions, and six MAT examples. Intermediate files are retained under `Output/`.
+Each `source()` call above is a separate step. Wait for it to finish before starting the next dependent step.
+
+| Step | R script in `Code/` | What it does and reads | Files used by the next steps |
+|---|---|---|---|
+| 1 | `00_preprocessing_basedata.R` | Rasterizes the supplied country boundaries and calibrates the GPW population grid to the 2020 national totals in `population_WB.xlsx`. | `Output/basedata/country_ID.tif` and `Output/0.5by0.5/calib_2020_population_0.5by0.5.tif`. |
+| 2 | `01_processing_animal_based_food.R` | Reads the seven livestock-production rasters, processes bovine/sheep/goat products, and calibrates and aggregates production using `livestock.xlsx` and `livestock_new.xlsx`. It uses the country grid from Step 1. | Intermediate rasters under `Output/animal/` and calibrated animal-food production rasters under `Output/0.5by0.5/`. |
+| 3 | `01_processing_plant_based_food.R` | Combines the SPAM crop-production rasters into food groups, aggregates them to 0.5 degrees and calibrates production using `crop_production_demand.xlsx`. | `Output/plant/` intermediates and calibrated plant-food production rasters under `Output/0.5by0.5/`. |
+| 4 | `01_processing_feed.R` | Resamples livestock grain-feed data, calibrates total feed to 2020, separates crop and oil feed using the supplied CSV tables, and distributes feed among livestock types. | Feed intermediates under `Output/feed/` and baseline feed-demand rasters under `Output/0.5by0.5/basic_feed_demand/`. |
+| 5 | `01_processing_base_fooddemand.R` | Allocates the baseline food-demand statistics to the calibrated population grid, using the crop and livestock production/demand workbooks. | `Output/0.5by0.5/basic_food_demand/`. |
+| 6 | `01_processing_EAT_fooddemand.R` | Uses the calibrated population grid and `food_demand_for_lancet.xlsx` to construct EAT-Lancet food demand. | `Output/0.5by0.5/EAT_food_demand/`. |
+| 7 | `01_processing_feed_EAT.R` | Uses baseline feed demand and the EAT-to-baseline animal-food demand ratios from Steps 5–6 to construct EAT feed demand. | `Output/0.5by0.5/EAT_feed_demand/`. |
+| 8 | `02_processing_production_locations.R` | Combines the calibrated food-production rasters from Steps 2–3 to identify production locations shared by the optimization workflow. | `Output/0.5by0.5/calib_2020_point_production.tif`. |
+| 9 | `03_build_resistence.R` | Combines road, rail and shipping inputs into the transport-speed surface. Uses the production locations and population grid to compute the nine production-to-demand H5 distance partitions. | `Output/transport/alltransport_speed_new.tif` and `Output/distances/short_Harvdis_production_demand_<first>-<last>.h5`. |
+| 10 | `04_food_demand_to_gams.R` | Matches demand and production to the transport grid and exports the six implemented food/scenario MAT examples. | `vegetable_index.mat`, `cereal_index.mat`, `legume_nuts_index.mat`, `fruit_eat_index.mat`, `oilcrop_eat_index.mat` and `legume_nuts_eat_index.mat` under `Output/GAMS/`. |
+
+The half-EAT national and grid-level demand GDX files are supplied inputs. The `01` scripts listed above do not themselves export half-EAT GDX files. Likewise, `04` does not convert every food category or scenario to GDX/INC; the supplied GAMS inputs bridge this part of the current workflow.
 
 In `03_build_resistence.R`, select the distance partitions using `partitions_to_run`. Its default is `1:9`; completed H5 files must be excluded from subsequent runs because the script stops rather than overwriting them. These partitions are independent and must all be available for the MATLAB conversion.
 
@@ -782,7 +801,14 @@ Alternatively, after all nine H5 partitions have been generated, run `Code/03_bu
 project_dir = fileparts(fileparts(mfilename('fullpath')));
 ```
 
-This conversion writes the same distance parameter to `Output/GAMS/distanceHisv_all.gdx`. It does not generate the food-production or dietary-demand GDX files.
+In MATLAB, add the GAMS API and run the conversion script, for example:
+
+```matlab
+addpath('/path/to/GAMS/system/directory');
+run('/path/to/Reproduction-Package/Code/03_build resistence GAMS file.m');
+```
+
+The GAMS MATLAB interface must provide `wgdx`. The conversion reads H5 datasets `/distance_all1` through `/distance_all9`, concatenates the blocks in production-point order, and writes the parameter `distances` to `Output/GAMS/distanceHisv_all.gdx`. It does not generate the food-production or dietary-demand GDX files. When using the released distance GDX, skip the H5-to-GDX conversion; the transport-speed raster is still needed for scripts `04`–`09`.
 
 Choose a scenario and run all 11 food-category GAMS models in its folder:
 
@@ -801,7 +827,37 @@ For example, run the bovine LFS-Base model from a terminal with GAMS available o
 gams "Code/LFS-Base/Bovine_optimal.gms"
 ```
 
-Repeat for the remaining ten food categories. Grid-level results are written to `Output/GAMS/optimize result/`, using scenario-specific filenames.
+To run all 11 models in one scenario from R, execute the following **after preprocessing**. Change `scenario_dir` to the desired folder from the table above; use a fresh selection for each scenario.
+
+```r
+gams <- Sys.which("gams")
+stopifnot(nzchar(gams))  # Or assign the full path to the GAMS executable.
+scenario_dir <- "Code/LFS-Base"
+models <- sort(list.files(scenario_dir, pattern = "\\.gms$", full.names = TRUE))
+stopifnot(length(models) == 11L)
+log_dir <- file.path("Output", "GAMS", "logs", basename(scenario_dir))
+dir.create(log_dir, recursive = TRUE, showWarnings = FALSE)
+for (model in models) {
+  listing <- file.path(normalizePath(log_dir), paste0(tools::file_path_sans_ext(basename(model)), ".lst"))
+  status <- system2(gams, args = c(shQuote(normalizePath(model)), shQuote(paste0("o=", listing))))
+  if (status != 0L) stop("GAMS failed: ", model)
+}
+```
+
+GAMS reads each food's production and demand sets and GDX parameters. The food-miles models also read the shared `distances` parameter; the minimum-emission models read the food's production emission intensity and set `emi_total` to that intensity. Each model enforces nonnegative shipments, production-capacity upper bounds and full demand satisfaction. The resulting `x` variable records optimized shipments between production and demand locations.
+
+Grid-level results are written to `Output/GAMS/optimize result/`:
+
+| Scenario | Result filename pattern |
+|---|---|
+| LFS-Base | `<food>_disHarv.gdx` |
+| LFS-EAT | `<food>_disHarv_eat.gdx` |
+| LFS-halfEAT | `<food>_halfeat_minfoodmiles.gdx` |
+| Min-Base | `<food>_minEmission.gdx` |
+| Min-EAT | `<food>_eat_minEmission.gdx` |
+| Min-halfEAT | `<food>_halfeat_minEmission.gdx` |
+
+After each solve, inspect the GAMS listing for the solver/model status and confirm that the requested optimum was obtained. A GDX file's existence alone does not establish feasibility or optimality. Proceed to post-processing only after the required 11 food-category results are available.
 
 For the separate country-level sensitivity workflow, see Section 6.6.
 
@@ -825,9 +881,19 @@ source("Code/09_postprocessing_regional_food_trade.R")
 | `08` | Consumption-attributed food-related emissions raster and country table | `Output/food_related_emissions/` |
 | `09` | Regional/country trade flows, imports, exports and import shares | `Output/regional_food_trade/` |
 
+The five R steps perform the following calculations:
+
+1. **Identify trade pairs (`05`).** Read `x` from the 11 LFS-Base GDX files, map production/demand labels to the raster-cell indices used in the optimization, merge the food-category records, and save each production cell's list of destination cells as `Output/GAMS/source_all.rds`. This is the input to `06`.
+2. **Calculate paths by mode (`06`).** Read `source_all.rds`, the transport-speed raster and the production/population rasters; construct the transport graph; find each requested path; and sum segment distances by road, rail, sea and walk. Save `distance` in km together with the reference-factor-weighted `emissions` value, origin/destination cells, and production/demand indices. Write a separate RDS for each 10,000-origin partition, then combine all partitions into `Output/transport_paths/bau_emission_type.rds`.
+3. **Calculate food miles and transport emissions (`07`).** Read the combined RDS and optimized shipment quantities. Recover mode-specific distances using the reference factors, apply the original intra-cell distance correction, and multiply distances by food quantities to obtain food miles. Apply food- and mode-specific transport emission factors to calculate transport emissions. Write 13 Excel workbooks and 165 TIFF rasters covering regional emissions and demand-cell distance, quantity-weighted distance and emissions, both overall and by mode. `distance_by_weight` is a sum of quantity × distance, not a weighted mean distance.
+4. **Calculate food-related emissions (`08`).** Read optimized shipment quantities and the 11 production-intensity GDX files in `Input/GAMS input/`. Multiply each shipment by the emission intensity at its production location and attribute the result to the destination. Sum across foods for the consumption-cell TIFF, and export the country-by-food table. This script calculates production emissions attributable to consumption; it does not add transport emissions.
+5. **Summarize regional trade (`09`).** Read optimized shipments and the country/region lookup. Apply the original region-merging rules, then export region-to-region flows, country-to-country flows and imports/exports. The summary distinguishes cross-region movements from international movements within or between regions. Write `LFS_Base_trade.xlsx`, `LFS_Base_country_trade.xlsx` and `LFS_Base_imports_exports.xlsx`.
+
+Keep the lookup workbook and the population, production and transport rasters available for all five scripts. Script `08` also needs the production-intensity GDX files; scripts `05`, `07`, `08` and `09` require the optimized GDX shipments. No further GAMS solve is performed by these R post-processing scripts.
+
 Script `06` runs all production-point partitions by default and has `combine_results <- TRUE`. To run selected partitions, set `partitions_to_run` to their indices; combine only after all expected partition files are available. Script `07` requires the combined `bau_emission_type.rds` file. Scripts `08` and `09` can run independently once the preprocessing inputs and GAMS results are available; they do not require scripts `05`–`07`.
 
-The current post-processing scripts do not calculate changes relative to observed Baseline trade without an additional Baseline trade dataset. For LFS-EAT, half-EAT, minimum-emission or country-level results, adapt the input result names, spatial indices and output paths to that scenario before running the corresponding analysis.
+For LFS-EAT, half-EAT, minimum-emission or country-level results, adapt the input result names, spatial indices and output paths to that scenario before running the corresponding analysis.
 
 ### 6.6. Run country-level sensitivity analyses
 
@@ -869,6 +935,33 @@ gams "Code/Country-level/Min-food-related-emissions/EAT/Bovine_countrylevel_MinE
 gams "Code/Country-level/Min-food-related-emissions/halfEAT/Bovine_countrylevel_MinE_halfEAT.gms"
 ```
 
+The country-level sequence is:
+
+1. **Select the supplied inputs.** Use `<food>_production_set.inc`, `<food>_demand_set.inc`, `<food>_production.gdx` and the scenario-specific demand GDX in `Input/GAMS input/Country-level/`. Food-miles optimization additionally reads `dist_new.gdx`; food-related-emission optimization additionally reads the corresponding `emi_*.gdx`. These inputs already use national model labels; do not substitute the grid-level files with similar names.
+2. **Select one objective and diet.** Choose one of the six folders above. For example, `Min-food-related-emissions/EAT/` means national food-related-emission minimization with EAT demand. Running the BAU folder first is not required to solve EAT or half-EAT.
+3. **Run GAMS for every food category.** The terminal commands above run one food category. To run all 11 from R, use the batch example below. It invokes the same GAMS models; it does not rebuild national inputs.
+4. **Check the solves.** Inspect each listing for solver/model status. Supply and demand constraints must be satisfied before the shipment results are used in comparisons.
+5. **Read national results for comparison.** Use the national labels in `x`, national production/demand data and `dist_new` or `emi_total`. Do not map national labels through raster `start_index` or `demand_index`.
+
+Run all 11 national models in a selected folder from R as follows:
+
+```r
+gams <- Sys.which("gams")
+stopifnot(nzchar(gams))
+objective <- "Min-food-miles"  # Or "Min-food-related-emissions".
+diet <- "BAU"                 # Or "EAT" or "halfEAT".
+scenario_dir <- file.path("Code", "Country-level", objective, diet)
+models <- sort(list.files(scenario_dir, pattern = "\\.gms$", full.names = TRUE))
+stopifnot(length(models) == 11L)
+log_dir <- file.path("Output", "GAMS", "Country-level", "logs", objective, diet)
+dir.create(log_dir, recursive = TRUE, showWarnings = FALSE)
+for (model in models) {
+  listing <- file.path(normalizePath(log_dir), paste0(tools::file_path_sans_ext(basename(model)), ".lst"))
+  status <- system2(gams, args = c(shQuote(normalizePath(model)), shQuote(paste0("o=", listing))))
+  if (status != 0L) stop("GAMS failed: ", model)
+}
+```
+
 Run the other ten food-category models in each selected folder as well. These combinations are independent; completing one is not a prerequisite for another. Food-miles models use national transport distances from `dist_new.gdx`. Minimum-emission models use production emission intensities only, retain `emi_total`, and do not read transport-emission intensity files.
 
 All country-level models write to:
@@ -879,7 +972,7 @@ Output/GAMS/Country-level/optimize result/
 
 Food-miles results are named `Mindist_<scenario>_<food>_countrylevel.gdx`; minimum-emission results are named `MinE_<scenario>_<food>_countrylevel.gdx`, with `<scenario>` equal to `bau`, `eat` or `halfEAT`. Each GDX contains the optimized shipment variable `x` and the corresponding model data. Check the GAMS solve status before using the results.
 
-Scripts `05`–`09` use grid-level indices and are not directly applicable to these national models. Country-level result analysis must use the national model labels and parameters instead of raster-cell indices.
+Country-level result analysis uses the national model labels and parameters. The grid-level workflow in scripts `05`–`09` uses raster-cell indices.
 
 ## 7. Citation
 
