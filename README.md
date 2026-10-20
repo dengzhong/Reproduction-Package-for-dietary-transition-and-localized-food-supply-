@@ -1,79 +1,77 @@
 # *Lower global food system emissions via integrating dietary transition and localized food supply*
 
-Zhongci Deng<sup>1,8</sup>, Cai Li<sup>2,8</sup>, Yuanchao Hu<sup>3</sup>, Prajal Pradhan<sup>4,5</sup>, Jingyu Wang<sup>1</sup>, Guangyi Zhai<sup>1</sup>, Yi Yang<sup>6</sup>, Zhen Wang<sup>1,2,*</sup>, Brett A Bryan<sup>7</sup>
+Zhongci Deng<sup>1,8</sup>, Cai Li<sup>2,8</sup>, Yuanchao Hu<sup>3</sup>, Prajal Pradhan<sup>4,5</sup>, Jingyu Wang<sup>1</sup>, Guangyi Zhai<sup>1</sup>, Yi Yang<sup>6</sup>, Zhen Wang<sup>1,2,\*</sup>, Brett A Bryan<sup>7</sup>
 
-<sup>1</sup> College of Resources and Environment, Huazhong Agricultural University, Wuhan 430070, China.<br>
-<sup>2</sup> College of Public Administration, Huazhong Agricultural University, Wuhan 430070, China.<br>
-<sup>3</sup> School of Ecology, Environment & Resources, Guangdong University of Technology, Guangzhou 510006, China.<br>
-<sup>4</sup> Integrated Research on Energy, Environment, and Society (IREES), Energy and Sustainability Research Institute Groningen, University of Groningen, Groningen, 9747 AG, Netherlands.<br>
-<sup>5</sup> Potsdam Institute for Climate Impact Research (PIK), Member of the Leibniz Association, P.O. Box 60 12 03, D-14412 Potsdam, Germany.<br>
-<sup>6</sup> Key Laboratory of the Three Gorges Reservoir Region’s Eco-Environment, Ministry of Education, Chongqing University, Chongqing 400044, China.<br>
-<sup>7</sup> School of Life and Environmental Sciences, Deakin University, Melbourne, Vic, Australia.
+<sup>1</sup> College of Resources and Environment, Huazhong Agricultural University, Wuhan 430070, China.<br> <sup>2</sup> College of Public Administration, Huazhong Agricultural University, Wuhan 430070, China.<br> <sup>3</sup> School of Ecology, Environment & Resources, Guangdong University of Technology, Guangzhou 510006, China.<br> <sup>4</sup> Integrated Research on Energy, Environment, and Society (IREES), Energy and Sustainability Research Institute Groningen, University of Groningen, Groningen, 9747 AG, Netherlands.<br> <sup>5</sup> Potsdam Institute for Climate Impact Research (PIK), Member of the Leibniz Association, P.O. Box 60 12 03, D-14412 Potsdam, Germany.<br> <sup>6</sup> Key Laboratory of the Three Gorges Reservoir Region’s Eco-Environment, Ministry of Education, Chongqing University, Chongqing 400044, China.<br> <sup>7</sup> School of Life and Environmental Sciences, Deakin University, Melbourne, Vic, Australia.
 
 <sup>8</sup> These authors contributed equally.
 
-**Corresponding author:** Zhen Wang — [sinoo@mail.hzau.edu.cn](mailto:sinoo@mail.hzau.edu.cn)
+**Corresponding author:** Zhen Wang — [sinoo\@mail.hzau.edu.cn](mailto:sinoo@mail.hzau.edu.cn)
 
 ## Contents
 
 - [1. Overview](#1-overview)
-- [2. Data preparation](#2-data-preparation)
-  - [2.1. Livestock Production Systems data](#21-livestock-production-systems-data)
-    - [2.1.1. Livestock production data](#211-livestock-production-data)
-    - [2.1.2. Grain-based feed consumption data](#212-grain-based-feed-consumption-data)
-    - [2.1.3. Data preparation instructions](#213-data-preparation-instructions)
-  - [2.2. SPAM crop production data](#22-spam-crop-production-data)
-    - [2.2.1. Data used in this study](#221-data-used-in-this-study)
-    - [2.2.2. Data preparation instructions](#222-data-preparation-instructions)
-    - [2.2.3. Version and reproducibility](#223-version-and-reproducibility)
-  - [2.3. Gridded Population of the World (GPWv4) population data](#23-gridded-population-of-the-world-gpwv4-population-data)
-    - [2.3.1. Data used in this study](#231-data-used-in-this-study)
-    - [2.3.2. Data preparation instructions](#232-data-preparation-instructions)
-    - [2.3.3. Version and reproducibility](#233-version-and-reproducibility)
-  - [2.4. Transportation networks](#24-transportation-networks)
-    - [2.4.1. GRIP4 road density data](#241-grip4-road-density-data)
-      - [2.4.1.1. Dataset information](#2411-dataset-information)
-      - [2.4.1.2. Data used in this study](#2412-data-used-in-this-study)
-      - [2.4.1.3. Expected files](#2413-expected-files)
-      - [2.4.1.4. Data preparation instructions](#2414-data-preparation-instructions)
-      - [2.4.1.5. Reference](#2415-reference)
-    - [2.4.2. Global Shipping Lanes data](#242-global-shipping-lanes-data)
-      - [2.4.2.1. Dataset information](#2421-dataset-information)
-      - [2.4.2.2. Data used in this study](#2422-data-used-in-this-study)
-      - [2.4.2.3. Data preparation instructions](#2423-data-preparation-instructions)
-      - [2.4.2.4. Processing in the transportation network](#2424-processing-in-the-transportation-network)
-      - [2.4.2.5. Reference](#2425-reference)
-  - [2.5. GADM administrative boundary data](#25-gadm-administrative-boundary-data)
-    - [2.5.1. Data used in this study](#251-data-used-in-this-study)
-    - [2.5.2. Data preparation instructions](#252-data-preparation-instructions)
-    - [2.5.3. Download using GitHub CLI](#253-download-using-github-cli)
-    - [2.5.4. Data organization](#254-data-organization)
-- [3. Code and reproducibility](#3-code-and-reproducibility)
-  - [3.1. Original code archive for verification](#31-original-code-archive-for-verification)
-- [4. Software requirements](#4-software-requirements)
-- [5. Data availability](#5-data-availability)
-  - [5.1. Large GAMS input dataset](#51-large-gams-input-dataset)
-  - [5.2. Step 1. Download the GDX dataset](#52-step-1-download-the-gdx-dataset)
-    - [5.2.1. Option A. Manual download (Windows, macOS, and Linux)](#521-option-a-manual-download-windows-macos-and-linux)
-    - [5.2.2. Option B. Download using GitHub CLI (Windows, macOS, and Linux)](#522-option-b-download-using-github-cli-windows-macos-and-linux)
-  - [5.3. Step 2. Reconstruct the original GDX file](#53-step-2-reconstruct-the-original-gdx-file)
-    - [5.3.1. Option A. macOS and Linux](#531-option-a-macos-and-linux)
-    - [5.3.2. Option B. Windows (PowerShell)](#532-option-b-windows-powershell)
-  - [5.4. Step 3. Verify data integrity](#54-step-3-verify-data-integrity)
-    - [5.4.1. Option A. macOS](#541-option-a-macos)
-    - [5.4.2. Option B. Linux](#542-option-b-linux)
-    - [5.4.3. Option C. Windows (PowerShell)](#543-option-c-windows-powershell)
-  - [5.5. Step 4. Use the reconstructed dataset in GAMS](#55-step-4-use-the-reconstructed-dataset-in-gams)
-  - [5.6. Additional data and reproducibility information](#56-additional-data-and-reproducibility-information)
-- [6. How to run the code](#6-how-to-run-the-code)
-  - [6.1. Workflow](#61-workflow)
-  - [6.2. Prepare the working directory and software](#62-prepare-the-working-directory-and-software)
-  - [6.3. Run preprocessing](#63-run-preprocessing)
-  - [6.4. Prepare GAMS inputs and run optimization](#64-prepare-gams-inputs-and-run-optimization)
-  - [6.5. Run LFS-Base post-processing](#65-run-lfs-base-post-processing)
-  - [6.6. Run country-level sensitivity analyses](#66-run-country-level-sensitivity-analyses)
-- [7. Citation](#7-citation)
-- [8. License](#8-license)
+- [2. Software environment](#2-software-environment)
+  - [2.1. Optimization environment](#21-optimization-environment)
+  - [2.2. R environment](#22-r-environment)
+  - [2.3. MATLAB interface](#23-matlab-interface)
+- [3. Data preparation](#3-data-preparation)
+  - [3.1. Livestock Production Systems data](#31-livestock-production-systems-data)
+    - [3.1.1. Livestock production data](#311-livestock-production-data)
+    - [3.1.2. Grain-based feed consumption data](#312-grain-based-feed-consumption-data)
+    - [3.1.3. Data preparation instructions](#313-data-preparation-instructions)
+  - [3.2. SPAM crop production data](#32-spam-crop-production-data)
+    - [3.2.1. Data used in this study](#321-data-used-in-this-study)
+    - [3.2.2. Data preparation instructions](#322-data-preparation-instructions)
+    - [3.2.3. Version and reproducibility](#323-version-and-reproducibility)
+  - [3.3. Gridded Population of the World (GPWv4) population data](#33-gridded-population-of-the-world-gpwv4-population-data)
+    - [3.3.1. Data used in this study](#331-data-used-in-this-study)
+    - [3.3.2. Data preparation instructions](#332-data-preparation-instructions)
+    - [3.3.3. Version and reproducibility](#333-version-and-reproducibility)
+  - [3.4. Transportation networks](#34-transportation-networks)
+    - [3.4.1. GRIP4 road density data](#341-grip4-road-density-data)
+      - [3.4.1.1. Dataset information](#3411-dataset-information)
+      - [3.4.1.2. Data used in this study](#3412-data-used-in-this-study)
+      - [3.4.1.3. Expected files](#3413-expected-files)
+      - [3.4.1.4. Data preparation instructions](#3414-data-preparation-instructions)
+      - [3.4.1.5. Reference](#3415-reference)
+    - [3.4.2. Global Shipping Lanes data](#342-global-shipping-lanes-data)
+      - [3.4.2.1. Dataset information](#3421-dataset-information)
+      - [3.4.2.2. Data used in this study](#3422-data-used-in-this-study)
+      - [3.4.2.3. Data preparation instructions](#3423-data-preparation-instructions)
+      - [3.4.2.4. Processing in the transportation network](#3424-processing-in-the-transportation-network)
+      - [3.4.2.5. Reference](#3425-reference)
+  - [3.5. GADM administrative boundary data](#35-gadm-administrative-boundary-data)
+    - [3.5.1. Data used in this study](#351-data-used-in-this-study)
+    - [3.5.2. Data preparation instructions](#352-data-preparation-instructions)
+    - [3.5.3. Download using GitHub CLI](#353-download-using-github-cli)
+    - [3.5.4. Data organization](#354-data-organization)
+- [4. Code and reproducibility](#4-code-and-reproducibility)
+  - [4.1. Original code archive for verification](#41-original-code-archive-for-verification)
+- [5. Software requirements](#5-software-requirements)
+- [6. Data availability](#6-data-availability)
+  - [6.1. Large GAMS input dataset](#61-large-gams-input-dataset)
+  - [6.2. Step 1. Download the GDX dataset](#62-step-1-download-the-gdx-dataset)
+    - [6.2.1. Option A. Manual download (Windows, macOS, and Linux)](#621-option-a-manual-download-windows-macos-and-linux)
+    - [6.2.2. Option B. Download using GitHub CLI (Windows, macOS, and Linux)](#622-option-b-download-using-github-cli-windows-macos-and-linux)
+  - [6.3. Step 2. Reconstruct the original GDX file](#63-step-2-reconstruct-the-original-gdx-file)
+    - [6.3.1. Option A. macOS and Linux](#631-option-a-macos-and-linux)
+    - [6.3.2. Option B. Windows (PowerShell)](#632-option-b-windows-powershell)
+  - [6.4. Step 3. Verify data integrity](#64-step-3-verify-data-integrity)
+    - [6.4.1. Option A. macOS](#641-option-a-macos)
+    - [6.4.2. Option B. Linux](#642-option-b-linux)
+    - [6.4.3. Option C. Windows (PowerShell)](#643-option-c-windows-powershell)
+  - [6.5. Step 4. Use the reconstructed dataset in GAMS](#65-step-4-use-the-reconstructed-dataset-in-gams)
+  - [6.6. Additional data and reproducibility information](#66-additional-data-and-reproducibility-information)
+- [7. How to run the code](#7-how-to-run-the-code)
+  - [7.1. Workflow](#71-workflow)
+  - [7.2. Prepare the working directory and software](#72-prepare-the-working-directory-and-software)
+  - [7.3. Run preprocessing](#73-run-preprocessing)
+  - [7.4. Prepare GAMS inputs and run optimization](#74-prepare-gams-inputs-and-run-optimization)
+  - [7.5. Run LFS-Base post-processing](#75-run-lfs-base-post-processing)
+  - [7.6. Run country-level sensitivity analyses](#76-run-country-level-sensitivity-analyses)
+- [8. Citation](#8-citation)
+- [9. License](#9-license)
 
 ## 1. Overview
 
@@ -83,9 +81,68 @@ The study investigates the potential of integrating localized food supply (LFS) 
 
 The analysis considers spatially explicit food production and consumption, transportation infrastructure, regional production capacities, and alternative dietary demands.
 
-## 2. Data preparation
+## 2. Software environment
 
-### 2.1. Livestock Production Systems data
+### 2.1. Optimization environment
+
+The optimization models were implemented in GAMS and solved as linear programs. The principal computational environment is summarized below.
+
+| Component | Recorded configuration |
+|------------------------------------|------------------------------------|
+| GAMS | 41.4.0 |
+| Optimization solver | IBM ILOG CPLEX 22.1.0.0 |
+| Operating platform | 64-bit Microsoft Windows, x86-64 |
+| Processor configuration | 2 sockets, 256 cores and 512 available hardware threads |
+| Model formulation | Continuous linear programming |
+
+Thread allocation varies among archived runs and is documented in the individual logs. Available hardware threads describe the server configuration rather than the number used by every optimization. The current GAMS scripts specify their solver and thread options explicitly; country-level models specify CONOPT4.
+
+### 2.2. R environment
+
+R is used for data preprocessing, spatial analysis and post-processing. The software and package versions are listed below.
+
+| Component        | Version or platform      |
+|------------------|--------------------------|
+| R                | 4.4.2 (2024-10-31)       |
+| Operating system | 64-bit Microsoft Windows |
+| Architecture     | x86-64                   |
+
+| R package  | Installed version |
+|------------|-------------------|
+| `Matrix`   | 1.7.1             |
+| `R.matlab` | 3.7.0             |
+| `dplyr`    | 1.1.4             |
+| `gdxrrw`   | 1.0.10            |
+| `igraph`   | 2.2.1             |
+| `openxlsx` | 4.2.7.1           |
+| `raster`   | 3.6.32            |
+| `readxl`   | 1.4.3             |
+| `sf`       | 1.0.23            |
+| `terra`    | 1.8.86            |
+| `tidyr`    | 1.3.1             |
+
+The scripts also require `geosphere`, `pbapply`, `rhdf5`, which must be installed before running the corresponding distance and HDF5 processing scripts. `rhdf5` is distributed through Bioconductor.
+
+The R–GAMS interface requires `gdxrrw` and an accessible GAMS GDX library. Initialize the interface with the system directory of the installed GAMS distribution:
+
+``` r
+library(gdxrrw)
+igdx("/path/to/GAMS/system/directory")
+```
+
+To record the R environment used for a reproduction run, execute:
+
+``` r
+sessionInfo()
+```
+
+### 2.3. MATLAB interface
+
+The optional H5-to-GDX conversion uses MATLAB and the GAMS MATLAB interface providing `wgdx`. Add the interface directory to the MATLAB path before running `Code/03_build resistence GAMS file.m`. The released distance GDX can be used directly to bypass this conversion.
+
+## 3. Data preparation
+
+### 3.1. Livestock Production Systems data
 
 The spatially explicit livestock production and grain-based feed consumption data were obtained from the **Livestock Production Systems** dataset available through the CSIRO Data Access Portal.
 
@@ -95,7 +152,7 @@ The spatially explicit livestock production and grain-based feed consumption dat
 
 To reproduce the analysis, download the following 14 ZIP archives, comprising seven livestock production datasets and seven grain-based feed consumption datasets.
 
-#### 2.1.1. Livestock production data
+#### 3.1.1. Livestock production data
 
 Download the following seven files:
 
@@ -109,7 +166,7 @@ Download the following seven files:
 
 These datasets provide spatially explicit livestock production information for the corresponding livestock product categories.
 
-#### 2.1.2. Grain-based feed consumption data
+#### 3.1.2. Grain-based feed consumption data
 
 Download the following seven files:
 
@@ -123,7 +180,7 @@ Download the following seven files:
 
 These datasets provide spatially explicit estimates of grain biomass consumption associated with livestock production, expressed in kg/km²/year.
 
-#### 2.1.3. Data preparation instructions
+#### 3.1.3. Data preparation instructions
 
 1.  Open the [CSIRO dataset page](https://data.csiro.au/collection/csiro:29893).
 2.  Download all 14 ZIP archives listed above.
@@ -134,7 +191,7 @@ These datasets provide spatially explicit estimates of grain biomass consumption
 
 Preserve the original filenames and any required directory structure to ensure compatibility with the subsequent data-processing scripts.
 
-### 2.2. SPAM crop production data
+### 3.2. SPAM crop production data
 
 The spatially disaggregated crop production data were obtained from the International Food Policy Research Institute (IFPRI)'s Spatial Production Allocation Model (SPAM).
 
@@ -153,13 +210,13 @@ The spatially disaggregated crop production data were obtained from the Internat
 - **Data provider:** International Food Policy Research Institute (IFPRI)
 - **Persistent identifier:** <https://doi.org/10.7910/DVN/SWPENT>
 
-#### 2.2.1. Data used in this study
+#### 3.2.1. Data used in this study
 
 This study uses the **crop production layers** from SPAM 2020 Version 1.0 to represent the spatial distribution of crop production.
 
 The required inputs are the production data for the crops included in the analysis, rather than the corresponding harvested area, physical area, or yield layers.
 
-#### 2.2.2. Data preparation instructions
+#### 3.2.2. Data preparation instructions
 
 1.  Open the [SPAM 2020 Version 1.0 historical dataset record](https://cgspace.cgiar.org/items/e3cb3635-4bb7-4b88-b90d-3d1c76364f82).
 2.  Download the crop production data files for the crops included in this study.
@@ -170,7 +227,7 @@ The required inputs are the production data for the crops included in the analys
 
 Preserve the original filenames and directory structure required by the data-processing scripts.
 
-#### 2.2.3. Version and reproducibility
+#### 3.2.3. Version and reproducibility
 
 The analysis uses **SPAM 2020 Version 1.0**, downloaded in 2024. This is the version used to prepare the original analysis inputs.
 
@@ -180,7 +237,7 @@ The current SPAM dataset page lists Version 2.0, Release 2:
 
 Version 2.0 should not be substituted for Version 1.0 when reproducing the original analysis, because revisions to the underlying spatial production estimates may affect the results. Users should obtain Version 1.0 from the historical dataset record linked above.
 
-### 2.3. Gridded Population of the World (GPWv4) population data
+### 3.3. Gridded Population of the World (GPWv4) population data
 
 Gridded population data were obtained from the **Gridded Population of the World, Version 4 (GPWv4)** dataset developed by the NASA Socioeconomic Data and Applications Center (SEDAC).
 
@@ -188,7 +245,7 @@ Gridded population data were obtained from the **Gridded Population of the World
 
 [GPWv4 — Socioeconomic Data and Applications Center (SEDAC)](https://sedac.ciesin.columbia.edu/data/collection/gpw-v4)
 
-#### 2.3.1. Data used in this study
+#### 3.3.1. Data used in this study
 
 This study uses gridded population data to represent the spatial distribution of population.
 
@@ -203,7 +260,7 @@ For population-count grids, use the **Population Count** dataset corresponding t
 
 The GPWv4 Beta release is archived separately from the subsequent Version 4.0 release. The two releases differ in certain datasets and country-level population estimates.
 
-#### 2.3.2. Data preparation instructions
+#### 3.3.2. Data preparation instructions
 
 1.  Open the [archived GPWv4 Beta Population Count dataset](https://doi.org/10.7927/H4BG2KXS).
 2.  Download the gridded population-count data required by the analysis.
@@ -214,7 +271,7 @@ The GPWv4 Beta release is archived separately from the subsequent Version 4.0 re
 
 Preserve the original filenames and spatial reference information required by the data-processing scripts.
 
-#### 2.3.3. Version and reproducibility
+#### 3.3.3. Version and reproducibility
 
 The GPWv4 Beta release was made available before the subsequent Version 4.0 release. According to the June 2016 Version 4.0 release notes, changes included revisions to Egypt's administrative boundaries and population estimates, corrections to data integration for Panama and Poland, and the addition of new datasets.
 
@@ -222,11 +279,11 @@ The Beta population-count data are available through the archived DOI listed abo
 
 The release notes and information on the Beta archive are available through the [GPWv4 data documentation](https://sedac.ciesin.columbia.edu/data/collection/gpw-v4).
 
-### 2.4. Transportation networks
+### 3.4. Transportation networks
 
 Transportation network data were obtained from global road density rasters and global shipping route datasets. These data provide the spatial infrastructure information used to construct the transportation network and associated friction surfaces.
 
-#### 2.4.1. GRIP4 road density data
+#### 3.4.1. GRIP4 road density data
 
 The road density data were obtained from the **Global Roads Inventory Project, Version 4 (GRIP4)**.
 
@@ -236,7 +293,7 @@ The road density data were obtained from the **Global Roads Inventory Project, V
 - [GRIP4 — PBL Data Portal](https://dataportaal.pbl.nl/GRIP4)
 - [GRIP4 supplementary spatial data — Zenodo](https://doi.org/10.5281/zenodo.6420961)
 
-##### 2.4.1.1. Dataset information
+##### 3.4.1.1. Dataset information
 
 - **Dataset:** Global Roads Inventory Project, Version 4
 - **Data type:** Global road density raster data
@@ -248,7 +305,7 @@ The road density data were obtained from the **Global Roads Inventory Project, V
 
 GRIP4 provides global road density rasters representing the spatial distribution of road infrastructure. The dataset includes the total road network and five road categories: highways, primary roads, secondary roads, tertiary roads, and local roads.
 
-##### 2.4.1.2. Data used in this study
+##### 3.4.1.2. Data used in this study
 
 Download the six global road density raster archives from the official GRIP4 download page.
 
@@ -263,12 +320,12 @@ Download the six global road density raster archives from the official GRIP4 dow
 
 All six datasets can be downloaded from the [official GRIP4 download page](https://www.globio.info/download-grip-dataset). Alternatively, consult the [PBL Data Portal](https://dataportaal.pbl.nl/GRIP4).
 
-##### 2.4.1.3. Expected files
+##### 3.4.1.3. Expected files
 
 After extracting the downloaded archives, retain the following files where supplied by the dataset:
 
 | File | Description |
-|----|----|
+|------------------------------------|------------------------------------|
 | `GRIP4_TOTAL_DENS_m_km2.asc` | Density of all road types combined |
 | `GRIP4_TP1_DENS_m_km2.asc` | Density of highways |
 | `GRIP4_TP2_DENS_m_km2.asc` | Density of primary roads |
@@ -280,7 +337,7 @@ After extracting the downloaded archives, retain the following files where suppl
 
 The `.asc` files are ASCII grid rasters. The `.lyr` file is an example ArcGIS layer for visualization and is not required for numerical raster analysis.
 
-##### 2.4.1.4. Data preparation instructions
+##### 3.4.1.4. Data preparation instructions
 
 1.  Open the [official GRIP4 download page](https://www.globio.info/download-grip-dataset).
 2.  Download the six global road density raster ZIP archives listed above.
@@ -291,13 +348,13 @@ The `.asc` files are ASCII grid rasters. The `.lyr` file is an example ArcGIS la
 
 Preserve the original filenames and raster header information. Ensure that the rasters retain their original spatial resolution and WGS84 coordinate reference.
 
-##### 2.4.1.5. Reference
+##### 3.4.1.5. Reference
 
 Meijer, J. R., Huijbregts, M. A. J., Schotten, C. G. J., & Schipper, A. M. (2018). Global patterns of current and future road infrastructure. *Environmental Research Letters*, 13, 064006.
 
 <https://doi.org/10.1088/1748-9326/aabd42>
 
-#### 2.4.2. Global Shipping Lanes data
+#### 3.4.2. Global Shipping Lanes data
 
 The global shipping route data were obtained from the **Global Shipping Lanes** dataset published by Benden (2022).
 
@@ -306,7 +363,7 @@ The global shipping route data were obtained from the **Global Shipping Lanes** 
 - [Global Shipping Lanes — Zenodo dataset](https://doi.org/10.5281/zenodo.6361763)
 - [Global Shipping Lanes — GitHub repository](https://github.com/newzealandpaul/Shipping-Lanes)
 
-##### 2.4.2.1. Dataset information
+##### 3.4.2.1. Dataset information
 
 - **Dataset:** Global Shipping Lanes
 - **Author:** Benden, P.
@@ -324,13 +381,13 @@ The route data contain three categories:
 - **Middle:** Intermediate shipping lanes.
 - **Minor:** Minor shipping lanes.
 
-##### 2.4.2.2. Data used in this study
+##### 3.4.2.2. Data used in this study
 
 This study uses the vector shipping route network to represent maritime transportation corridors.
 
 The original shipping route data are provided in vector format. For integration with the other transportation networks, the routes are converted into a standardized 5-arcminute raster network during data processing.
 
-##### 2.4.2.3. Data preparation instructions
+##### 3.4.2.3. Data preparation instructions
 
 1.  Open the [Global Shipping Lanes dataset on Zenodo](https://doi.org/10.5281/zenodo.6361763) or the [GitHub repository](https://github.com/newzealandpaul/Shipping-Lanes).
 2.  Download the shipping route dataset.
@@ -342,7 +399,7 @@ The original shipping route data are provided in vector format. For integration 
 
 Preserve the original filenames and route-type attributes, particularly the `Major`, `Middle`, and `Minor` classifications.
 
-##### 2.4.2.4. Processing in the transportation network
+##### 3.4.2.4. Processing in the transportation network
 
 The shipping route data are converted from vector features into a 5-arcminute raster network to match the spatial resolution used for the transportation analysis.
 
@@ -354,13 +411,13 @@ In the original transportation network construction:
 
 The rasterized shipping network is integrated with road and rail networks to construct the transportation friction surface.
 
-##### 2.4.2.5. Reference
+##### 3.4.2.5. Reference
 
 Benden, P. (2022). *Global Shipping Lanes* [Data set]. Zenodo.
 
 <https://doi.org/10.5281/zenodo.6361763>
 
-### 2.5. GADM administrative boundary data
+### 3.5. GADM administrative boundary data
 
 Administrative boundary data used in the spatial analysis are provided through the **GADM (Database of Global Administrative Areas)** dataset.
 
@@ -370,7 +427,7 @@ Administrative boundary data used in the spatial analysis are provided through t
 
 To facilitate reproducibility, the GADM archive used in this study is distributed through the GitHub Release because the ZIP file exceeds GitHub's standard single-file upload limit of 100 MB.
 
-#### 2.5.1. Data used in this study
+#### 3.5.1. Data used in this study
 
 The required archive is:
 
@@ -384,7 +441,7 @@ The archive contains geographic administrative boundary data used for country-le
 
 The GADM archive is provided as an additional asset in the existing `distanceHisv-data-v1` Release. It is distributed separately from the main Git repository because of its file size.
 
-#### 2.5.2. Data preparation instructions
+#### 3.5.2. Data preparation instructions
 
 1.  Open the [GitHub Release page](https://github.com/dengzhong/Reproduction-Package-for-dietary-transition-and-localized-food-supply-/releases/tag/distanceHisv-data-v1).
 2.  Locate the **Assets** section.
@@ -396,7 +453,7 @@ The GADM archive is provided as an additional asset in the existing `distanceHis
 
 Preserve the original filenames and associated spatial data files. The extracted data should be placed directly in the designated directory, without introducing unnecessary additional folder levels.
 
-#### 2.5.3. Download using GitHub CLI
+#### 3.5.3. Download using GitHub CLI
 
 Users with GitHub CLI installed can also download the GADM archive directly from the existing Release:
 
@@ -415,7 +472,7 @@ After downloading, extract the archive into:
 
 For private repositories, appropriate GitHub authentication and repository access permissions are required.
 
-#### 2.5.4. Data organization
+#### 3.5.4. Data organization
 
 After completing the preceding data preparation steps, the input directories should follow this structure:
 
@@ -438,7 +495,7 @@ Input/
 
 The downloaded datasets should retain the filenames and directory structures expected by the corresponding data-processing scripts.
 
-## 3. Code and reproducibility
+## 4. Code and reproducibility
 
 Parameter definitions, input fields, identifiers, units and output structures are documented in the [parameter descriptions and data dictionary](Documentation/README.md).
 
@@ -454,7 +511,7 @@ The main analytical procedures include:
 
 The analyses examine the localized food supply strategy under baseline dietary demands (*LFS-Base*) and its integration with the EAT-Lancet dietary transition (*LFS-EAT*).
 
-### 3.1. Original code archive for verification
+### 4.1. Original code archive for verification
 
 For transparency and ease of verification, the **original source code** used in the study has been archived on Figshare:
 
@@ -462,7 +519,7 @@ For transparency and ease of verification, the **original source code** used in 
 
 This archive is provided to allow reviewers and interested researchers to directly compare the original implementation with the organized code presented in this GitHub repository.
 
-## 4. Software requirements
+## 5. Software requirements
 
 The main software environments used in this study include:
 
@@ -478,7 +535,7 @@ Additional tools for accessing and reconstructing the large input datasets inclu
 
 Additional R package dependencies and implementation details can be identified from the corresponding scripts.
 
-## 5. Data availability
+## 6. Data availability
 
 The analyses draw on spatially explicit agricultural production, food consumption, population, administrative boundaries, transportation networks, and GHG emission datasets.
 
@@ -490,7 +547,7 @@ Large input files that exceed GitHub's standard single-file size limit are distr
 
 These include the GAMS distance dataset `distanceHisv_all.gdx` and the GADM administrative boundary archive `gadm.zip`.
 
-### 5.1. Large GAMS input dataset
+### 6.1. Large GAMS input dataset
 
 **Dataset:** `distanceHisv_all.gdx`
 
@@ -511,7 +568,7 @@ Because the original dataset exceeds GitHub's individual file size limits, it ha
 The GDX-specific files in the Release are:
 
 | File                            | Description                               |
-|---------------------------------|-------------------------------------------|
+|-------------------------------|-----------------------------------------|
 | `distanceHisv_all.gdx.part-aaa` | Data part 1                               |
 | `distanceHisv_all.gdx.part-aab` | Data part 2                               |
 | `distanceHisv_all.gdx.part-aac` | Data part 3                               |
@@ -531,11 +588,11 @@ Together, the 11 parts contain the complete original dataset. They can be concat
 
 While the repository remains private, access to these assets requires appropriate GitHub repository permissions.
 
-### 5.2. Step 1. Download the GDX dataset
+### 6.2. Step 1. Download the GDX dataset
 
 The complete GDX dataset can be downloaded manually from the GitHub Release page or automatically using GitHub CLI.
 
-#### 5.2.1. Option A. Manual download (Windows, macOS, and Linux)
+#### 6.2.1. Option A. Manual download (Windows, macOS, and Linux)
 
 1.  Open the [GitHub Release page](https://github.com/dengzhong/Reproduction-Package-for-dietary-transition-and-localized-food-supply-/releases/tag/distanceHisv-data-v1).
 2.  Locate the **Assets** section.
@@ -545,7 +602,7 @@ The complete GDX dataset can be downloaded manually from the GitHub Release page
 
 All 11 data parts are required to reconstruct the original GDX file.
 
-#### 5.2.2. Option B. Download using GitHub CLI (Windows, macOS, and Linux)
+#### 6.2.2. Option B. Download using GitHub CLI (Windows, macOS, and Linux)
 
 Install GitHub CLI if it is not already available:
 
@@ -571,11 +628,11 @@ This command downloads only the 11 GDX data parts and their checksum file into t
 
 Other Release assets, such as `gadm.zip`, are not downloaded by this command.
 
-### 5.3. Step 2. Reconstruct the original GDX file
+### 6.3. Step 2. Reconstruct the original GDX file
 
 The 11 downloaded parts must be combined in alphabetical order to restore the original `distanceHisv_all.gdx`.
 
-#### 5.3.1. Option A. macOS and Linux
+#### 6.3.1. Option A. macOS and Linux
 
 Open a terminal and navigate to the folder containing the downloaded files:
 
@@ -591,7 +648,7 @@ cat distanceHisv_all.gdx.part-* > distanceHisv_all.gdx
 
 This command concatenates the 11 binary parts in filename order and generates `distanceHisv_all.gdx`.
 
-#### 5.3.2. Option B. Windows (PowerShell)
+#### 6.3.2. Option B. Windows (PowerShell)
 
 Open Windows PowerShell and navigate to the directory containing the downloaded files:
 
@@ -640,7 +697,7 @@ This procedure combines the files sequentially as binary data without loading th
 
 Ensure that sufficient free disk space is available before reconstruction. Approximately 17 GB of additional storage is required for the reconstructed file.
 
-### 5.4. Step 3. Verify data integrity
+### 6.4. Step 3. Verify data integrity
 
 A SHA-256 checksum is provided to verify that the reconstructed GDX file is byte-for-byte identical to the original dataset.
 
@@ -650,7 +707,7 @@ The expected SHA-256 checksum is:
 3b862d64f9fddb82f1f1db5025aa97822be2be27d73d893e05f23de9186eadda
 ```
 
-#### 5.4.1. Option A. macOS
+#### 6.4.1. Option A. macOS
 
 In the directory containing the reconstructed GDX file and `SHA256SUMS.txt`, execute:
 
@@ -658,7 +715,7 @@ In the directory containing the reconstructed GDX file and `SHA256SUMS.txt`, exe
 shasum -a 256 -c SHA256SUMS.txt
 ```
 
-#### 5.4.2. Option B. Linux
+#### 6.4.2. Option B. Linux
 
 Execute:
 
@@ -672,7 +729,7 @@ If the file has been reconstructed correctly, the output should be:
 distanceHisv_all.gdx: OK
 ```
 
-#### 5.4.3. Option C. Windows (PowerShell)
+#### 6.4.3. Option C. Windows (PowerShell)
 
 Open PowerShell in the directory containing the reconstructed GDX file and `SHA256SUMS.txt`.
 
@@ -699,7 +756,7 @@ SHA-256 verification: OK
 
 A matching checksum confirms that the reconstructed file is identical to the original GDX file. If verification fails, check that all 11 parts were downloaded completely and concatenated in the correct order.
 
-### 5.5. Step 4. Use the reconstructed dataset in GAMS
+### 6.5. Step 4. Use the reconstructed dataset in GAMS
 
 After successful reconstruction and verification, the file `distanceHisv_all.gdx` can be used as an input dataset for the corresponding GAMS spatial optimization models.
 
@@ -707,7 +764,7 @@ Place the reconstructed file in the expected input directory or adjust the file 
 
 The GDX format is supported by GAMS and can be inspected using GAMS-compatible tools.
 
-### 5.6. Additional data and reproducibility information
+### 6.6. Additional data and reproducibility information
 
 The original source code and additional methodological information are available through the Figshare archive:
 
@@ -717,11 +774,11 @@ The data sources, assumptions, and analytical procedures are further documented 
 
 This GitHub repository provides organized code and supporting materials to facilitate examination and reproduction of the analytical framework, while the Figshare archive preserves the original implementation for direct comparison and verification.
 
-## 6. How to run the code
+## 7. How to run the code
 
-### 6.1. Workflow
+### 7.1. Workflow
 
-```mermaid
+``` mermaid
 flowchart TD
     A["Prepare external data in Input/"] --> B["00: country grid and population"]
     B --> C["01: food production, food demand and feed demand"]
@@ -744,17 +801,17 @@ flowchart TD
 
 The numbered R post-processing scripts currently read **LFS-Base** results. Other scenarios require corresponding result filenames and separate post-processing output paths. The GAMS scenarios are independent alternatives, not consecutive steps.
 
-### 6.2. Prepare the working directory and software
+### 7.2. Prepare the working directory and software
 
 Run R from the repository root, which contains `Code/`, `Input/` and `Output/`. For example:
 
-```r
+``` r
 setwd("/path/to/Reproduction-Package")
 ```
 
-Prepare the external datasets described in Section 2 and retain the supplied supporting inputs. The country-to-region lookup is `Input/Other data/mapping country and region.xlsx`. Install the R packages loaded at the start of each script. Reading GDX files requires the GAMS GDX library and `gdxrrw`; initialize the interface before running the post-processing scripts:
+Prepare the external datasets described in Section 3 and retain the supplied supporting inputs. The country-to-region lookup is `Input/Other data/mapping country and region.xlsx`. Install the R packages loaded at the start of each script. Reading GDX files requires the GAMS GDX library and `gdxrrw`; initialize the interface before running the post-processing scripts:
 
-```r
+``` r
 library(gdxrrw)
 igdx("/path/to/GAMS/system/directory")
 ```
@@ -765,11 +822,11 @@ Keep `Input/` for supplied or downloaded data and `Output/` for generated files.
 
 The GAMS files currently contain absolute paths. Replace the project prefix `/Users/zhongcideng/Desktop/Code availability/` with the absolute path to your local repository before running them. Keep the remaining input and output subdirectories unchanged. Use the solver specified in each model: the grid-level models use CPLEX, while the country-level models currently specify CONOPT4.
 
-### 6.3. Run preprocessing
+### 7.3. Run preprocessing
 
 Run the following scripts in this order. Scripts sharing the `01` prefix perform different tasks and must not be treated as interchangeable.
 
-```r
+``` r
 source("Code/00_preprocessing_basedata.R")
 source("Code/01_processing_animal_based_food.R")
 source("Code/01_processing_plant_based_food.R")
@@ -785,7 +842,7 @@ source("Code/04_food_demand_to_gams.R")
 Each `source()` call above is a separate step. Wait for it to finish before starting the next dependent step.
 
 | Step | R script in `Code/` | What it does and reads | Files used by the next steps |
-|---|---|---|---|
+|------------------|------------------|------------------|------------------|
 | 1 | `00_preprocessing_basedata.R` | Rasterizes the supplied country boundaries and calibrates the GPW population grid to the 2020 national totals in `population_WB.xlsx`. | `Output/basedata/country_ID.tif` and `Output/0.5by0.5/calib_2020_population_0.5by0.5.tif`. |
 | 2 | `01_processing_animal_based_food.R` | Reads the seven livestock-production rasters, processes bovine/sheep/goat products, and calibrates and aggregates production using `livestock.xlsx` and `livestock_new.xlsx`. It uses the country grid from Step 1. | Intermediate rasters under `Output/animal/` and calibrated animal-food production rasters under `Output/0.5by0.5/`. |
 | 3 | `01_processing_plant_based_food.R` | Combines the SPAM crop-production rasters into food groups, aggregates them to 0.5 degrees and calibrates production using `crop_production_demand.xlsx`. | `Output/plant/` intermediates and calibrated plant-food production rasters under `Output/0.5by0.5/`. |
@@ -801,25 +858,25 @@ The half-EAT national and grid-level demand GDX files are supplied inputs. The `
 
 In `03_build_resistence.R`, select the distance partitions using `partitions_to_run`. Its default is `1:9`; completed H5 files must be excluded from subsequent runs because the script stops rather than overwriting them. These partitions are independent and must all be available for the MATLAB conversion.
 
-### 6.4. Prepare GAMS inputs and run optimization
+### 7.4. Prepare GAMS inputs and run optimization
 
 The supplied GDX and INC inputs are in `Input/GAMS input/`; country-level inputs are in its `Country-level/` subdirectory. `04_food_demand_to_gams.R` exports six MAT files and does **not** generate all the supplied GDX and INC files. Use the supplied inputs to reproduce the optimization runs.
 
-For the grid-level food-miles models, reconstruct the released distance file as described in Section 5 and place it at:
+For the grid-level food-miles models, reconstruct the released distance file as described in Section 6 and place it at:
 
-```text
+``` text
 Output/GAMS/distanceHisv_all.gdx
 ```
 
 Alternatively, after all nine H5 partitions have been generated, run `Code/03_build resistence GAMS file.m` in MATLAB with the GAMS MATLAB API containing `wgdx` on the MATLAB path. Because this script is stored inside `Code/`, set its first line to the repository root before running it:
 
-```matlab
+``` matlab
 project_dir = fileparts(fileparts(mfilename('fullpath')));
 ```
 
 In MATLAB, add the GAMS API and run the conversion script, for example:
 
-```matlab
+``` matlab
 addpath('/path/to/GAMS/system/directory');
 run('/path/to/Reproduction-Package/Code/03_build resistence GAMS file.m');
 ```
@@ -829,7 +886,7 @@ The GAMS MATLAB interface must provide `wgdx`. The conversion reads H5 datasets 
 Choose a scenario and run all 11 food-category GAMS models in its folder:
 
 | Scenario folder under `Code/` | Objective | Dietary demand |
-|---|---|---|
+|----|----|----|
 | `LFS-Base/` | Minimize food miles | Baseline |
 | `LFS-EAT/` | Minimize food miles | EAT-Lancet |
 | `LFS-halfEAT/` | Minimize food miles | Half-EAT |
@@ -839,13 +896,13 @@ Choose a scenario and run all 11 food-category GAMS models in its folder:
 
 For example, run the bovine LFS-Base model from a terminal with GAMS available on the command path:
 
-```bash
+``` bash
 gams "Code/LFS-Base/Bovine_optimal.gms"
 ```
 
 To run all 11 models in one scenario from R, execute the following **after preprocessing**. Change `scenario_dir` to the desired folder from the table above; use a fresh selection for each scenario.
 
-```r
+``` r
 gams <- Sys.which("gams")
 stopifnot(nzchar(gams))  # Or assign the full path to the GAMS executable.
 scenario_dir <- "Code/LFS-Base"
@@ -864,24 +921,24 @@ GAMS reads each food's production and demand sets and GDX parameters. The food-m
 
 Grid-level results are written to `Output/GAMS/optimize result/`:
 
-| Scenario | Result filename pattern |
-|---|---|
-| LFS-Base | `<food>_disHarv.gdx` |
-| LFS-EAT | `<food>_disHarv_eat.gdx` |
+| Scenario    | Result filename pattern           |
+|-------------|-----------------------------------|
+| LFS-Base    | `<food>_disHarv.gdx`              |
+| LFS-EAT     | `<food>_disHarv_eat.gdx`          |
 | LFS-halfEAT | `<food>_halfeat_minfoodmiles.gdx` |
-| Min-Base | `<food>_minEmission.gdx` |
-| Min-EAT | `<food>_eat_minEmission.gdx` |
-| Min-halfEAT | `<food>_halfeat_minEmission.gdx` |
+| Min-Base    | `<food>_minEmission.gdx`          |
+| Min-EAT     | `<food>_eat_minEmission.gdx`      |
+| Min-halfEAT | `<food>_halfeat_minEmission.gdx`  |
 
 After each solve, inspect the GAMS listing for the solver/model status and confirm that the requested optimum was obtained. A GDX file's existence alone does not establish feasibility or optimality. Proceed to post-processing only after the required 11 food-category results are available.
 
-For the separate country-level sensitivity workflow, see Section 6.6.
+For the separate country-level sensitivity workflow, see Section 7.6.
 
-### 6.5. Run LFS-Base post-processing
+### 7.5. Run LFS-Base post-processing
 
 After the 11 LFS-Base GAMS models have produced their `*_disHarv.gdx` results, run:
 
-```r
+``` r
 source("Code/05_postprocessing_food_trade_matrix.R")
 source("Code/06_postprocessing_optimized_transport_distances.R")
 source("Code/07_postprocessing_food_miles_and_transport_emissions.R")
@@ -890,7 +947,7 @@ source("Code/09_postprocessing_regional_food_trade.R")
 ```
 
 | Script | Main output | Output directory |
-|---|---|---|
+|------------------------|------------------------|------------------------|
 | `05` | `source_all.rds`: production-to-demand pairs used in optimized flows | `Output/GAMS/` |
 | `06` | Distance and reference-factor-weighted emissions by transport mode; partition RDS files and `bau_emission_type.rds` | `Output/transport_paths/` |
 | `07` | Food miles, transport emissions and regional transport-emission tables | `Output/food_miles_and_emissions/` |
@@ -899,11 +956,11 @@ source("Code/09_postprocessing_regional_food_trade.R")
 
 The five R steps perform the following calculations:
 
-1. **Identify trade pairs (`05`).** Read `x` from the 11 LFS-Base GDX files, map production/demand labels to the raster-cell indices used in the optimization, merge the food-category records, and save each production cell's list of destination cells as `Output/GAMS/source_all.rds`. This is the input to `06`.
-2. **Calculate paths by mode (`06`).** Read `source_all.rds`, the transport-speed raster and the production/population rasters; construct the transport graph; find each requested path; and sum segment distances by road, rail, sea and walk. Save `distance` in km together with the reference-factor-weighted `emissions` value, origin/destination cells, and production/demand indices. Write a separate RDS for each 10,000-origin partition, then combine all partitions into `Output/transport_paths/bau_emission_type.rds`.
-3. **Calculate food miles and transport emissions (`07`).** Read the combined RDS and optimized shipment quantities. Recover mode-specific distances using the reference factors, apply the original intra-cell distance correction, and multiply distances by food quantities to obtain food miles. Apply food- and mode-specific transport emission factors to calculate transport emissions. Write 13 Excel workbooks and 165 TIFF rasters covering regional emissions and demand-cell distance, quantity-weighted distance and emissions, both overall and by mode. `distance_by_weight` is a sum of quantity × distance, not a weighted mean distance.
-4. **Calculate food-related emissions (`08`).** Read optimized shipment quantities and the 11 production-intensity GDX files in `Input/GAMS input/`. Multiply each shipment by the emission intensity at its production location and attribute the result to the destination. Sum across foods for the consumption-cell TIFF, and export the country-by-food table. This script calculates production emissions attributable to consumption; it does not add transport emissions.
-5. **Summarize regional trade (`09`).** Read optimized shipments and the country/region lookup. Apply the original region-merging rules, then export region-to-region flows, country-to-country flows and imports/exports. The summary distinguishes cross-region movements from international movements within or between regions. Write `LFS_Base_trade.xlsx`, `LFS_Base_country_trade.xlsx` and `LFS_Base_imports_exports.xlsx`.
+1.  **Identify trade pairs (`05`).** Read `x` from the 11 LFS-Base GDX files, map production/demand labels to the raster-cell indices used in the optimization, merge the food-category records, and save each production cell's list of destination cells as `Output/GAMS/source_all.rds`. This is the input to `06`.
+2.  **Calculate paths by mode (`06`).** Read `source_all.rds`, the transport-speed raster and the production/population rasters; construct the transport graph; find each requested path; and sum segment distances by road, rail, sea and walk. Save `distance` in km together with the reference-factor-weighted `emissions` value, origin/destination cells, and production/demand indices. Write a separate RDS for each 10,000-origin partition, then combine all partitions into `Output/transport_paths/bau_emission_type.rds`.
+3.  **Calculate food miles and transport emissions (`07`).** Read the combined RDS and optimized shipment quantities. Recover mode-specific distances using the reference factors, apply the original intra-cell distance correction, and multiply distances by food quantities to obtain food miles. Apply food- and mode-specific transport emission factors to calculate transport emissions. Write 13 Excel workbooks and 165 TIFF rasters covering regional emissions and demand-cell distance, quantity-weighted distance and emissions, both overall and by mode. `distance_by_weight` is a sum of quantity × distance, not a weighted mean distance.
+4.  **Calculate food-related emissions (`08`).** Read optimized shipment quantities and the 11 production-intensity GDX files in `Input/GAMS input/`. Multiply each shipment by the emission intensity at its production location and attribute the result to the destination. Sum across foods for the consumption-cell TIFF, and export the country-by-food table. This script calculates production emissions attributable to consumption; it does not add transport emissions.
+5.  **Summarize regional trade (`09`).** Read optimized shipments and the country/region lookup. Apply the original region-merging rules, then export region-to-region flows, country-to-country flows and imports/exports. The summary distinguishes cross-region movements from international movements within or between regions. Write `LFS_Base_trade.xlsx`, `LFS_Base_country_trade.xlsx` and `LFS_Base_imports_exports.xlsx`.
 
 Keep the lookup workbook and the population, production and transport rasters available for all five scripts. Script `08` also needs the production-intensity GDX files; scripts `05`, `07`, `08` and `09` require the optimized GDX shipments. No further GAMS solve is performed by these R post-processing scripts.
 
@@ -911,11 +968,11 @@ Script `06` runs all production-point partitions by default and has `combine_res
 
 For LFS-EAT, half-EAT, minimum-emission or country-level results, adapt the input result names, spatial indices and output paths to that scenario before running the corresponding analysis.
 
-### 6.6. Run country-level sensitivity analyses
+### 7.6. Run country-level sensitivity analyses
 
 Country-level optimization uses the supplied national production, dietary-demand and emission-intensity data in `Input/GAMS input/Country-level/`. It can run directly from these inputs without first executing the grid-level R workflow or constructing `distanceHisv_all.gdx`.
 
-```mermaid
+``` mermaid
 flowchart TD
     A["Input/GAMS input/Country-level/<br/>national production, demand and sets"] --> B{"Choose objective"}
     B --> C["Min-food-miles<br/>use dist_new.gdx"]
@@ -931,7 +988,7 @@ flowchart TD
 There are six objective–diet combinations, each containing 11 models:
 
 | Folder under `Code/Country-level/` | Script suffix | Demand GDX filename |
-|---|---|---|
+|------------------------|------------------------|------------------------|
 | `Min-food-miles/BAU/` | `_Mindist_bau.gms` | `Bau_<food>_demand.gdx` |
 | `Min-food-miles/EAT/` | `_Mindist_eat.gms` | `EAT_<food>_demand.gdx` |
 | `Min-food-miles/halfEAT/` | `_Mindist_halfEAT.gms` | `halfEAT_<food>_demand.gdx` |
@@ -939,9 +996,9 @@ There are six objective–diet combinations, each containing 11 models:
 | `Min-food-related-emissions/EAT/` | `_MinE_eat.gms` | `EAT_<food>_demand.gdx` |
 | `Min-food-related-emissions/halfEAT/` | `_MinE_halfEAT.gms` | `halfEAT_<food>_demand.gdx` |
 
-First update the absolute project prefix in the GAMS scripts as described in Section 6.2. Then run the models for the desired combination. The following bovine examples cover all six combinations:
+First update the absolute project prefix in the GAMS scripts as described in Section 7.2. Then run the models for the desired combination. The following bovine examples cover all six combinations:
 
-```bash
+``` bash
 gams "Code/Country-level/Min-food-miles/BAU/Bovine_countrylevel_Mindist_bau.gms"
 gams "Code/Country-level/Min-food-miles/EAT/Bovine_countrylevel_Mindist_eat.gms"
 gams "Code/Country-level/Min-food-miles/halfEAT/Bovine_countrylevel_Mindist_halfEAT.gms"
@@ -953,15 +1010,15 @@ gams "Code/Country-level/Min-food-related-emissions/halfEAT/Bovine_countrylevel_
 
 The country-level sequence is:
 
-1. **Select the supplied inputs.** Use `<food>_production_set.inc`, `<food>_demand_set.inc`, `<food>_production.gdx` and the scenario-specific demand GDX in `Input/GAMS input/Country-level/`. Food-miles optimization additionally reads `dist_new.gdx`; food-related-emission optimization additionally reads the corresponding `emi_*.gdx`. These inputs already use national model labels; do not substitute the grid-level files with similar names.
-2. **Select one objective and diet.** Choose one of the six folders above. For example, `Min-food-related-emissions/EAT/` means national food-related-emission minimization with EAT demand. Running the BAU folder first is not required to solve EAT or half-EAT.
-3. **Run GAMS for every food category.** The terminal commands above run one food category. To run all 11 from R, use the batch example below. It invokes the same GAMS models; it does not rebuild national inputs.
-4. **Check the solves.** Inspect each listing for solver/model status. Supply and demand constraints must be satisfied before the shipment results are used in comparisons.
-5. **Read national results for comparison.** Use the national labels in `x`, national production/demand data and `dist_new` or `emi_total`. Do not map national labels through raster `start_index` or `demand_index`.
+1.  **Select the supplied inputs.** Use `<food>_production_set.inc`, `<food>_demand_set.inc`, `<food>_production.gdx` and the scenario-specific demand GDX in `Input/GAMS input/Country-level/`. Food-miles optimization additionally reads `dist_new.gdx`; food-related-emission optimization additionally reads the corresponding `emi_*.gdx`. These inputs already use national model labels; do not substitute the grid-level files with similar names.
+2.  **Select one objective and diet.** Choose one of the six folders above. For example, `Min-food-related-emissions/EAT/` means national food-related-emission minimization with EAT demand. Running the BAU folder first is not required to solve EAT or half-EAT.
+3.  **Run GAMS for every food category.** The terminal commands above run one food category. To run all 11 from R, use the batch example below. It invokes the same GAMS models; it does not rebuild national inputs.
+4.  **Check the solves.** Inspect each listing for solver/model status. Supply and demand constraints must be satisfied before the shipment results are used in comparisons.
+5.  **Read national results for comparison.** Use the national labels in `x`, national production/demand data and `dist_new` or `emi_total`. Do not map national labels through raster `start_index` or `demand_index`.
 
 Run all 11 national models in a selected folder from R as follows:
 
-```r
+``` r
 gams <- Sys.which("gams")
 stopifnot(nzchar(gams))
 objective <- "Min-food-miles"  # Or "Min-food-related-emissions".
@@ -982,7 +1039,7 @@ Run the other ten food-category models in each selected folder as well. These co
 
 All country-level models write to:
 
-```text
+``` text
 Output/GAMS/Country-level/optimize result/
 ```
 
@@ -990,7 +1047,7 @@ Food-miles results are named `Mindist_<scenario>_<food>_countrylevel.gdx`; minim
 
 Country-level result analysis uses the national model labels and parameters. The grid-level workflow in scripts `05`–`09` uses raster-cell indices.
 
-## 7. Citation
+## 8. Citation
 
 If you use the code, methods, or analytical framework provided in this repository, please cite the corresponding research paper:
 
@@ -1002,7 +1059,7 @@ The original code archive is available at:
 
 <https://doi.org/10.6084/m9.figshare.28448249>
 
-## 8. License
+## 9. License
 
 This repository is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
 
