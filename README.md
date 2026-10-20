@@ -68,8 +68,9 @@ Zhongci Deng<sup>1,8</sup>, Cai Li<sup>2,8</sup>, Yuanchao Hu<sup>3</sup>, Praja
   - [7.2. Prepare the working directory and software](#72-prepare-the-working-directory-and-software)
   - [7.3. Run preprocessing](#73-run-preprocessing)
   - [7.4. Prepare GAMS inputs and run optimization](#74-prepare-gams-inputs-and-run-optimization)
-  - [7.5. Run LFS-Base post-processing](#75-run-lfs-base-post-processing)
-  - [7.6. Run country-level sensitivity analyses](#76-run-country-level-sensitivity-analyses)
+  - [7.5. Model dimensions and optimization results](#75-model-dimensions-and-optimization-results)
+  - [7.6. Run LFS-Base post-processing](#76-run-lfs-base-post-processing)
+  - [7.7. Run country-level sensitivity analyses](#77-run-country-level-sensitivity-analyses)
 - [8. Citation](#8-citation)
 - [9. License](#9-license)
 
@@ -932,9 +933,31 @@ Grid-level results are written to `Output/GAMS/optimize result/`:
 
 After each solve, inspect the GAMS listing for the solver/model status and confirm that the requested optimum was obtained. A GDX file's existence alone does not establish feasibility or optimality. Proceed to post-processing only after the required 11 food-category results are available.
 
-For the separate country-level sensitivity workflow, see Section 7.6.
+For the separate country-level sensitivity workflow, see Section 7.7.
 
-### 7.5. Run LFS-Base post-processing
+### 7.5. Model dimensions and optimization results
+
+The table below summarizes the 11 archived LFS-Base runs in `Output/GAMS/logs/`, implemented in GAMS 41.4.0 using CPLEX 22.1.0.0. All runs reported LP status 1 (optimal) and normal job completion. A [machine-readable summary](Documentation/solver_summary.csv) provides the extracted values and source log filenames.
+
+Model dimensions correspond to the generated GAMS model **before CPLEX presolve**. The variable count includes the objective variable, and the equation count includes the objective equation and any additional equations present in the archived run. These counts describe model dimensions, rather than the number of origin–destination pairs carrying positive shipments.
+
+| Food category | Variables | Equations | Solve status | CPLEX time (s) | Total elapsed time (h) |
+|------------|-----------:|-----------:|------------|-----------:|-----------:|
+| [Bovine](Output/GAMS/logs/Bovine_optimal.log) | 862,331,583 | 58,744 | Optimal | 43,221.33 | 23.680 |
+| [cereal](Output/GAMS/logs/cereal_optimal.log) | 613,439,310 | 50,095 | Optimal | 32,771.53 | 17.003 |
+| [eggs](Output/GAMS/logs/eggs_optimal.log) | 526,014,784 | 47,057 | Optimal | 8,782.20 | 5.136 |
+| [fruit](Output/GAMS/logs/fruit_optimal.log) | 532,173,062 | 47,271 | Optimal | 10,801.20 | 5.509 |
+| [legume_nuts](Output/GAMS/logs/legumes_nuts_optimal.log) | 440,978,749 | 44,102 | Optimal | 1,986.12 | 2.665 |
+| [milk](Output/GAMS/logs/milk_optimal.log) | 517,928,447 | 46,776 | Optimal | 15,120.39 | 6.842 |
+| [oilcrop](Output/GAMS/logs/oilcrop_optimal.log) | 446,134,941 | 44,017 | Optimal | 1,115.59 | 2.562 |
+| [pig](Output/GAMS/logs/pig_optimal.log) | 300,160,561 | 37,607 | Optimal | 35,716.25 | 11.303 |
+| [poultry](Output/GAMS/logs/poultry_optimal.log) | 469,122,655 | 45,080 | Optimal | 62,870.53 | 19.782 |
+| [root](Output/GAMS/logs/root_optimal.log) | 504,892,466 | 46,323 | Optimal | 4,071.42 | 3.536 |
+| [vegetable](Output/GAMS/logs/vegetable_optimal.log) | 456,518,329 | 44,642 | Optimal | 5,582.23 | 3.682 |
+
+CPLEX time is the solver-reported optimization time; total elapsed time is the GAMS job duration, including compilation, data loading, model generation, optimization and result export. The CSV retains elapsed seconds at the precision available in the logs. This table summarizes archived runs; it does not report new solves of the reorganized scripts.
+
+### 7.6. Run LFS-Base post-processing
 
 After the 11 LFS-Base GAMS models have produced their `*_disHarv.gdx` results, run:
 
@@ -968,7 +991,7 @@ Script `06` runs all production-point partitions by default and has `combine_res
 
 For LFS-EAT, half-EAT, minimum-emission or country-level results, adapt the input result names, spatial indices and output paths to that scenario before running the corresponding analysis.
 
-### 7.6. Run country-level sensitivity analyses
+### 7.7. Run country-level sensitivity analyses
 
 Country-level optimization uses the supplied national production, dietary-demand and emission-intensity data in `Input/GAMS input/Country-level/`. It can run directly from these inputs without first executing the grid-level R workflow or constructing `distanceHisv_all.gdx`.
 
