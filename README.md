@@ -57,6 +57,7 @@
   - [6.3. Run preprocessing](#63-run-preprocessing)
   - [6.4. Prepare GAMS inputs and run optimization](#64-prepare-gams-inputs-and-run-optimization)
   - [6.5. Run LFS-Base post-processing](#65-run-lfs-base-post-processing)
+  - [6.6. Run country-level sensitivity analyses](#66-run-country-level-sensitivity-analyses)
 - [7. Citation](#7-citation)
 - [8. License](#8-license)
 
@@ -253,7 +254,7 @@ All six datasets can be downloaded from the [official GRIP4 download page](https
 After extracting the downloaded archives, retain the following files where supplied by the dataset:
 
 | File | Description |
-|------------------------------------|------------------------------------|
+|----|----|
 | `GRIP4_TOTAL_DENS_m_km2.asc` | Density of all road types combined |
 | `GRIP4_TP1_DENS_m_km2.asc` | Density of highways |
 | `GRIP4_TP2_DENS_m_km2.asc` | Density of primary roads |
@@ -494,7 +495,7 @@ Because the original dataset exceeds GitHub's individual file size limits, it ha
 The GDX-specific files in the Release are:
 
 | File                            | Description                               |
-|-------------------------------|-----------------------------------------|
+|---------------------------------|-------------------------------------------|
 | `distanceHisv_all.gdx.part-aaa` | Data part 1                               |
 | `distanceHisv_all.gdx.part-aab` | Data part 2                               |
 | `distanceHisv_all.gdx.part-aac` | Data part 3                               |
@@ -704,7 +705,7 @@ This GitHub repository provides organized code and supporting materials to facil
 
 ### 6.1. Workflow
 
-``` mermaid
+```mermaid
 flowchart TD
     A["Prepare external data in Input/"] --> B["00: country grid and population"]
     B --> C["01: food production, food demand and feed demand"]
@@ -720,6 +721,9 @@ flowchart TD
     K --> L["07: food miles and transport emissions"]
     I --> M["08: food-related emissions"]
     I --> N["09: regional trade and imports/exports"]
+    A --> O["Country-level inputs"]
+    O --> P["Select objective and diet<br/>run 11 country-level GAMS models"]
+    P --> Q["Country-level optimized flows"]
 ```
 
 The numbered R post-processing scripts currently read **LFS-Base** results. Other scenarios require corresponding result filenames and separate post-processing output paths. The GAMS scenarios are independent alternatives, not consecutive steps.
@@ -728,13 +732,13 @@ The numbered R post-processing scripts currently read **LFS-Base** results. Othe
 
 Run R from the repository root, which contains `Code/`, `Input/` and `Output/`. For example:
 
-``` r
+```r
 setwd("/path/to/Reproduction-Package")
 ```
 
 Prepare the external datasets described in Section 2 and retain the supplied supporting inputs. The country-to-region lookup is `Input/Other data/mapping country and region.xlsx`. Install the R packages loaded at the start of each script. Reading GDX files requires the GAMS GDX library and `gdxrrw`; initialize the interface before running the post-processing scripts:
 
-``` r
+```r
 library(gdxrrw)
 igdx("/path/to/GAMS/system/directory")
 ```
@@ -745,7 +749,7 @@ The GAMS files currently contain absolute paths. Replace the project prefix `/Us
 
 Run the following scripts in this order. Scripts sharing the `01` prefix perform different tasks and must not be treated as interchangeable.
 
-``` r
+```r
 source("Code/00_preprocessing_basedata.R")
 source("Code/01_processing_animal_based_food.R")
 source("Code/01_processing_plant_based_food.R")
@@ -768,13 +772,13 @@ The supplied GDX and INC inputs are in `Input/GAMS input/`; country-level inputs
 
 For the grid-level food-miles models, reconstruct the released distance file as described in Section 5 and place it at:
 
-``` text
+```text
 Output/GAMS/distanceHisv_all.gdx
 ```
 
 Alternatively, after all nine H5 partitions have been generated, run `Code/03_build resistence GAMS file.m` in MATLAB with the GAMS MATLAB API containing `wgdx` on the MATLAB path. Because this script is stored inside `Code/`, set its first line to the repository root before running it:
 
-``` matlab
+```matlab
 project_dir = fileparts(fileparts(mfilename('fullpath')));
 ```
 
@@ -783,7 +787,7 @@ This conversion writes the same distance parameter to `Output/GAMS/distanceHisv_
 Choose a scenario and run all 11 food-category GAMS models in its folder:
 
 | Scenario folder under `Code/` | Objective | Dietary demand |
-|----|----|----|
+|---|---|---|
 | `LFS-Base/` | Minimize food miles | Baseline |
 | `LFS-EAT/` | Minimize food miles | EAT-Lancet |
 | `LFS-halfEAT/` | Minimize food miles | Half-EAT |
@@ -793,19 +797,19 @@ Choose a scenario and run all 11 food-category GAMS models in its folder:
 
 For example, run the bovine LFS-Base model from a terminal with GAMS available on the command path:
 
-``` bash
+```bash
 gams "Code/LFS-Base/Bovine_optimal.gms"
 ```
 
 Repeat for the remaining ten food categories. Grid-level results are written to `Output/GAMS/optimize result/`, using scenario-specific filenames.
 
-For country-level sensitivity analyses, choose `BAU/`, `EAT/` or `halfEAT/` under either `Code/Country-level/Min-food-miles/` or `Code/Country-level/Min-food-related-emissions/`. Run all 11 models in the selected folder. These use country-level inputs and write results to `Output/GAMS/Country-level/optimize result/`. They do not require the grid-level `distanceHisv_all.gdx` file.
+For the separate country-level sensitivity workflow, see Section 6.6.
 
 ### 6.5. Run LFS-Base post-processing
 
 After the 11 LFS-Base GAMS models have produced their `*_disHarv.gdx` results, run:
 
-``` r
+```r
 source("Code/05_postprocessing_food_trade_matrix.R")
 source("Code/06_postprocessing_optimized_transport_distances.R")
 source("Code/07_postprocessing_food_miles_and_transport_emissions.R")
@@ -814,7 +818,7 @@ source("Code/09_postprocessing_regional_food_trade.R")
 ```
 
 | Script | Main output | Output directory |
-|------------------------|------------------------|------------------------|
+|---|---|---|
 | `05` | `source_all.rds`: production-to-demand pairs used in optimized flows | `Output/GAMS/` |
 | `06` | Distance and reference-factor-weighted emissions by transport mode; partition RDS files and `bau_emission_type.rds` | `Output/transport_paths/` |
 | `07` | Food miles, transport emissions and regional transport-emission tables | `Output/food_miles_and_emissions/` |
@@ -824,6 +828,58 @@ source("Code/09_postprocessing_regional_food_trade.R")
 Script `06` runs all production-point partitions by default and has `combine_results <- TRUE`. To run selected partitions, set `partitions_to_run` to their indices; combine only after all expected partition files are available. Script `07` requires the combined `bau_emission_type.rds` file. Scripts `08` and `09` can run independently once the preprocessing inputs and GAMS results are available; they do not require scripts `05`–`07`.
 
 The current post-processing scripts do not calculate changes relative to observed Baseline trade without an additional Baseline trade dataset. For LFS-EAT, half-EAT, minimum-emission or country-level results, adapt the input result names, spatial indices and output paths to that scenario before running the corresponding analysis.
+
+### 6.6. Run country-level sensitivity analyses
+
+Country-level optimization uses the supplied national production, dietary-demand and emission-intensity data in `Input/GAMS input/Country-level/`. It can run directly from these inputs without first executing the grid-level R workflow or constructing `distanceHisv_all.gdx`.
+
+```mermaid
+flowchart TD
+    A["Input/GAMS input/Country-level/<br/>national production, demand and sets"] --> B{"Choose objective"}
+    B --> C["Min-food-miles<br/>use dist_new.gdx"]
+    B --> D["Min-food-related-emissions<br/>use emi_*.gdx and emi_total"]
+    C --> E["Choose BAU, EAT or halfEAT<br/>run all 11 food-category models"]
+    D --> F["Choose BAU, EAT or halfEAT<br/>run all 11 food-category models"]
+    E --> G["Country-level Mindist results"]
+    F --> H["Country-level MinE results"]
+    G --> I["Output/GAMS/Country-level/optimize result/"]
+    H --> I
+```
+
+There are six objective–diet combinations, each containing 11 models:
+
+| Folder under `Code/Country-level/` | Script suffix | Demand GDX filename |
+|---|---|---|
+| `Min-food-miles/BAU/` | `_Mindist_bau.gms` | `Bau_<food>_demand.gdx` |
+| `Min-food-miles/EAT/` | `_Mindist_eat.gms` | `EAT_<food>_demand.gdx` |
+| `Min-food-miles/halfEAT/` | `_Mindist_halfEAT.gms` | `halfEAT_<food>_demand.gdx` |
+| `Min-food-related-emissions/BAU/` | `_MinE_bau.gms` | `Bau_<food>_demand.gdx` |
+| `Min-food-related-emissions/EAT/` | `_MinE_eat.gms` | `EAT_<food>_demand.gdx` |
+| `Min-food-related-emissions/halfEAT/` | `_MinE_halfEAT.gms` | `halfEAT_<food>_demand.gdx` |
+
+First update the absolute project prefix in the GAMS scripts as described in Section 6.2. Then run the models for the desired combination. The following bovine examples cover all six combinations:
+
+```bash
+gams "Code/Country-level/Min-food-miles/BAU/Bovine_countrylevel_Mindist_bau.gms"
+gams "Code/Country-level/Min-food-miles/EAT/Bovine_countrylevel_Mindist_eat.gms"
+gams "Code/Country-level/Min-food-miles/halfEAT/Bovine_countrylevel_Mindist_halfEAT.gms"
+
+gams "Code/Country-level/Min-food-related-emissions/BAU/Bovine_countrylevel_MinE_bau.gms"
+gams "Code/Country-level/Min-food-related-emissions/EAT/Bovine_countrylevel_MinE_eat.gms"
+gams "Code/Country-level/Min-food-related-emissions/halfEAT/Bovine_countrylevel_MinE_halfEAT.gms"
+```
+
+Run the other ten food-category models in each selected folder as well. These combinations are independent; completing one is not a prerequisite for another. Food-miles models use national transport distances from `dist_new.gdx`. Minimum-emission models use production emission intensities only, retain `emi_total`, and do not read transport-emission intensity files.
+
+All country-level models write to:
+
+```text
+Output/GAMS/Country-level/optimize result/
+```
+
+Food-miles results are named `Mindist_<scenario>_<food>_countrylevel.gdx`; minimum-emission results are named `MinE_<scenario>_<food>_countrylevel.gdx`, with `<scenario>` equal to `bau`, `eat` or `halfEAT`. Each GDX contains the optimized shipment variable `x` and the corresponding model data. Check the GAMS solve status before using the results.
+
+Scripts `05`–`09` use grid-level indices and are not directly applicable to these national models. Country-level result analysis must use the national model labels and parameters instead of raster-cell indices.
 
 ## 7. Citation
 
