@@ -75,6 +75,7 @@ Zhongci Deng<sup>1,8</sup>, Cai Li<sup>2,8</sup>, Yuanchao Hu<sup>3</sup>, Praja
   - [7.5. Model dimensions and optimization results](#75-model-dimensions-and-optimization-results)
   - [7.6. Run LFS-Base post-processing](#76-run-lfs-base-post-processing)
   - [7.7. Run country-level sensitivity analyses](#77-run-country-level-sensitivity-analyses)
+  - [7.8. Run production-adjustment sensitivity analyses (R20 and R40)](#78-run-production-adjustment-sensitivity-analyses-r20-and-r40)
 - [8. Citation](#8-citation)
 - [9. License](#9-license)
 
@@ -1230,6 +1231,54 @@ Output/GAMS/Country-level/optimize result/
 Food-miles results are named `Mindist_<scenario>_<food>_countrylevel.gdx`; minimum-emission results are named `MinE_<scenario>_<food>_countrylevel.gdx`, with `<scenario>` equal to `bau`, `eat` or `halfEAT`. Each GDX contains the optimized shipment variable `x` and the corresponding model data. Check the GAMS solve status before using the results.
 
 Country-level result analysis uses the national model labels and parameters. The grid-level workflow in scripts `05`–`09` uses raster-cell indices.
+
+### 7.8. Run production-adjustment sensitivity analyses (R20 and R40)
+
+The script [production_adjustment_sensitivity.R](Code/Production%20adjustment/production_adjustment_sensitivity.R) evaluates incomplete production adjustment when moving from *LFS-Base* to *LFS-EAT*. The *LFS-EATR20* and *LFS-EATR40* scenarios retain 20% and 40%, respectively, of the production reduction implied by this transition at each production cell and for each food category. These percentages apply to the reduction, not to total *LFS-Base* production.
+
+For each food category, the script sums optimized shipments over destinations to obtain production at each origin under *LFS-Base* and *LFS-EAT*. Realized production is then calculated as:
+
+``` text
+Q_Base(i,k) = sum_j x_Base(i,j,k)
+Q_EAT(i,k)  = sum_j x_EAT(i,j,k)
+R(i,k,alpha) = Q_EAT(i,k) + alpha * max(Q_Base(i,k) - Q_EAT(i,k), 0)
+alpha = 0, 0.2 or 0.4
+```
+
+The reference is optimized *LFS-Base* production, rather than input production capacity. Origins producing more under *LFS-EAT* retain their *LFS-EAT* output. Origins with positive *LFS-Base* output but no *LFS-EAT* shipments are included in the adjustment.
+
+**Required inputs:**
+
+- Both `<food>_disHarv.gdx` and `<food>_disHarv_eat.gdx` in `Output/GAMS/optimize result/` for every selected food category.
+- The corresponding production-emission intensity files (`emi_*.gdx`) in `Input/GAMS input/`.
+- `Output/0.5by0.5/calib_2020_point_production.tif`, `Output/0.5by0.5/calib_2020_population_0.5by0.5.tif` and `Input/Other data/countrylevel/country_ID_0.5_newest.tif` for country attribution.
+- R packages `gdxrrw` and `terra`, with the GAMS GDX library initialized as described in Section 7.2.
+
+Set the working directory to the repository root. The default `foods <- all_foods` processes all 11 categories; change this to `foods <- "cereal"` or a vector of food names to process a subset. Then run:
+
+``` r
+source("Code/Production adjustment/production_adjustment_sensitivity.R")
+```
+
+The script performs post-processing without another GAMS solve. Original shipment-related production emissions are attributed to **consumption countries**, while additional emissions from retained production are attributed to **production countries**. Adjusted country emissions equal the original *LFS-EAT* consumption-attributed emissions plus the country's additional production emissions. These country results therefore use a mixed attribution rule. Optimized shipments remain unchanged, and the script does not calculate additional transport emissions.
+
+Results remain in the R session; no files are exported automatically:
+
+| R object | Scenario |
+|------------------------------------|------------------------------------|
+| `BAU_results` | *LFS-Base*, not the separately defined manuscript Baseline |
+| `EAT_results` | *LFS-EAT* |
+| `EATR0_results` | No retained reduction (alpha = 0); identical to `EAT_results` |
+| `EATR20_results` | *LFS-EATR20* (alpha = 0.2) |
+| `EATR40_results` | *LFS-EATR40* (alpha = 0.4) |
+
+Each object contains `by_food`, `total`, `country_by_food` and `country_total`. The data-frame emission column is named `food_related_emissions`. Country identifiers follow the country raster; cells without an assigned country are retained as `UNMAPPED` to preserve global totals. Emission summaries retain the original scripts' division by `1e6`; physical units follow the source quantity and intensity units.
+
+The data frame `emissions_comparison_table` compares *LFS-Base*, *LFS-EAT*, *LFS-EATR20* and *LFS-EATR40* by food category and includes a total row. For a subset of foods, the last row is labeled `Selected total`. Its display label `Pulses` corresponds to the combined `legume_nuts` category in the code. Inspect it with:
+
+``` r
+View(emissions_comparison_table)
+```
 
 ## 8. Citation
 
