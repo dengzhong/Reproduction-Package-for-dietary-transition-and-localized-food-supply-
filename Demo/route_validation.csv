@@ -1,0 +1,4 @@
+"route","origin","destination","number_of_cells","cumulative_resistance","manually_summed_resistance","check_absolute_error","ocean_route_cells","penalty_cells"
+"D1",1410,2091,88,13.3905502392345,13.3905502392345,0,0,0
+"D2",1410,8790,116,16.658713170486,16.658713170486,0,30,0
+"D3",1410,8913,81,11.8947368421053,11.8947368421053,0,0,0

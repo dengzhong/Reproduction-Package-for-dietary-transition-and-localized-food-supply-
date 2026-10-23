@@ -1,0 +1,56 @@
+$ Title milks for foodshed; Nov 4, 2024 @Copyright Huazhong Agricultural university Zhongci Deng
+
+
+Option LP = CONOPT4;
+option Threads = 0;
+
+
+
+set i_milk  milk production point
+/
+$include "/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/Country-level/milk_production_set.inc"
+/;
+
+set j_milk  milk demand point
+/
+$include "/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/Country-level/milk_demand_set.inc"
+/;
+
+
+
+Parameter milk_production(i_milk) 'capacity of plant i in cases';
+execute_load '/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/Country-level/milk_production.gdx', milk_production;
+
+Parameter milk_demand(j_milk) 'demand markets';
+execute_load '/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/Country-level/halfEAT_milk_demand.gdx', milk_demand;
+
+
+Parameter dist_new(i_milk,j_milk) 'distance in kilometer';
+execute_load '/Users/zhongcideng/Desktop/Code availability/Input/GAMS input/Country-level/dist_new.gdx', dist_new;
+
+Variable
+   x(i_milk,j_milk) 'shipment quantities in cases'
+   z      'total transportation disttance in kilometer';
+   
+Positive Variable x;
+
+Equation
+   d         'define objective function'
+   supply(i_milk) 'observe supply limit at plant i'
+   demand(j_milk) 'satisfy demand at market j';
+
+d..
+    z =e= sum((i_milk,j_milk), dist_new(i_milk,j_milk)*x(i_milk,j_milk));
+
+supply(i_milk)..
+    sum(j_milk, x(i_milk,j_milk)) =l= milk_production(i_milk);
+
+demand(j_milk)..
+    sum(i_milk, x(i_milk,j_milk)) =e= milk_demand(j_milk);
+
+Model transport / all /;
+
+solve transport using lp minimizing z;
+
+execute_unload "/Users/zhongcideng/Desktop/Code availability/Output/GAMS/Country-level/optimize result/Mindist_halfEAT_milk_countrylevel.gdx";
+

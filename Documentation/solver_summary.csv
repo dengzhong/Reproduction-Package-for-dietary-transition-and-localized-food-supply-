@@ -1,0 +1,12 @@
+food,equations,variables,nonzeros,lp_status_code,lp_status,job_status,cplex_time_s,total_elapsed_s,total_elapsed_h,log_file
+Bovine,58744,862331583,2586971250,1,optimal,Normal completion,43221.33,85248.414,23.680,Bovine_optimal.log
+cereal,50095,613439310,1840298729,1,optimal,Normal completion,32771.53,61211.474,17.003,cereal_optimal.log
+eggs,47057,526014784,1578027332,1,optimal,Normal completion,8782.20,18488.423,5.136,eggs_optimal.log
+fruit,47271,532173062,1596501943,1,optimal,Normal completion,10801.20,19830.897,5.509,fruit_optimal.log
+legume_nuts,44102,440978749,1322922262,1,optimal,Normal completion,1986.12,9593.662,2.665,legumes_nuts_optimal.log
+milk,46776,517928447,1553769316,1,optimal,Normal completion,15120.39,24631.439,6.842,milk_optimal.log
+oilcrop,44017,446134941,1338390693,1,optimal,Normal completion,1115.59,9224.571,2.562,oilcrop_optimal.log
+pig,37607,300160561,900470736,1,optimal,Normal completion,35716.25,40690.496,11.303,pig_optimal.log
+poultry,45080,469122655,1407352659,1,optimal,Normal completion,62870.53,71215.378,19.782,poultry_optimal.log
+root,46323,504892466,1514661167,1,optimal,Normal completion,4071.42,12728.313,3.536,root_optimal.log
+vegetable,44642,456518329,1369539819,1,optimal,Normal completion,5582.23,13254.454,3.682,vegetable_optimal.log
