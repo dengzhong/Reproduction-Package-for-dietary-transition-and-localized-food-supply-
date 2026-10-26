@@ -1154,27 +1154,27 @@ Detailed optimization records for *LFS-Base* and *LFS-EAT* are available in `Out
 | Food category | Scenario | Variables | Equations | Non-zeros | Model status | Job status | CPLEX time (s) | Total time (h) |
 |----|----|---:|---:|---:|----|----|---:|---:|
 | [Cereal](Output/GAMS/logs/cereal_optimal.log) | *LFS-Base* | 613,439,310 | 50,095 | 1,840,298,729 | Optimal | Normal completion | 32,771.53 | 17.003 |
-| [Cereal](Output/GAMS/logs/cereal_optimal_eat.log) | *LFS-EAT* | 613,439,310 | 50,095 | 1,840,298,729 | Optimal | Normal completion | 4,808.81 | 9.274 |
+| [Cereal](Output/GAMS/logs/LFS-EAT/cereal_optimal_eat.log) | *LFS-EAT* | 613,439,310 | 50,095 | 1,840,298,729 | Optimal | Normal completion | 4,808.81 | 9.274 |
 | [Bovine](Output/GAMS/logs/Bovine_optimal.log) | *LFS-Base* | 862,331,583 | 58,744 | 2,586,971,250 | Optimal | Normal completion | 43,221.33 | 23.680 |
-| [Bovine](Output/GAMS/logs/Bovine_optimal_eat.log) | *LFS-EAT* | 862,331,583 | 58,744 | 2,586,971,250 | Optimal | Normal completion | 3,518.02 | 13.324 |
+| [Bovine](Output/GAMS/logs/LFS-EAT/Bovine_optimal_eat.log) | *LFS-EAT* | 862,331,583 | 58,744 | 2,586,971,250 | Optimal | Normal completion | 3,518.02 | 13.324 |
 | [Eggs](Output/GAMS/logs/eggs_optimal.log) | *LFS-Base* | 526,014,784 | 47,057 | 1,578,027,332 | Optimal | Normal completion | 8,782.20 | 5.136 |
-| [Eggs](Output/GAMS/logs/eggs_optimal_eat.log) | *LFS-EAT* | 526,014,784 | 47,057 | 1,578,027,332 | Optimal | Normal completion | 45,389.81 | 15.086 |
+| [Eggs](Output/GAMS/logs/LFS-EAT/eggs_optimal_eat.log) | *LFS-EAT* | 526,014,784 | 47,057 | 1,578,027,332 | Optimal | Normal completion | 45,389.81 | 15.086 |
 | [Fruits](Output/GAMS/logs/fruit_optimal.log) | *LFS-Base* | 532,173,062 | 47,271 | 1,596,501,943 | Optimal | Normal completion | 10,801.20 | 5.509 |
-| [Fruits](Output/GAMS/logs/fruit_optimal_eat.log) | *LFS-EAT* | 532,173,062 | 47,271 | 1,596,501,943 | Optimal | Normal completion | 19,018.78 | 7.762 |
+| [Fruits](Output/GAMS/logs/LFS-EAT/fruit_optimal_eat.log) | *LFS-EAT* | 532,173,062 | 47,271 | 1,596,501,943 | Optimal | Normal completion | 19,018.78 | 7.762 |
 | [Pulses](Output/GAMS/logs/legumes_nuts_optimal.log) | *LFS-Base* | 440,978,749 | 44,102 | 1,322,922,262 | Optimal | Normal completion | 1,986.12 | 2.665 |
-| [Pulses](Output/GAMS/logs/legume_nuts_optimal_eat.log) | *LFS-EAT* | 440,978,749 | 44,102 | 1,322,922,262 | Optimal | Not recorded | 163,536.14 | 47.771 |
+| [Pulses](Output/GAMS/logs/LFS-EAT/legume_nuts_optimal_eat.log) | *LFS-EAT* | 440,978,749 | 44,102 | 1,322,922,262 | Optimal | Not recorded | 163,536.14 | 47.771 |
 | [Milk](Output/GAMS/logs/milk_optimal.log) | *LFS-Base* | 517,928,447 | 46,776 | 1,553,769,316 | Optimal | Normal completion | 15,120.39 | 6.842 |
-| [Milk](Output/GAMS/logs/milk_optimal_eat.log) | *LFS-EAT* | 517,928,447 | 46,776 | 1,553,769,316 | Optimal | Normal completion | 195,774.78 | 56.916 |
+| [Milk](Output/GAMS/logs/LFS-EAT/milk_optimal_eat.log) | *LFS-EAT* | 517,928,447 | 46,776 | 1,553,769,316 | Optimal | Normal completion | 195,774.78 | 56.916 |
 | [Oil crop](Output/GAMS/logs/oilcrop_optimal.log) | *LFS-Base* | 446,134,941 | 44,017 | 1,338,390,693 | Optimal | Normal completion | 1,115.59 | 2.562 |
-| [Oil crop](Output/GAMS/logs/oilcrop_optimal_eat.log) | *LFS-EAT* | 446,134,941 | 44,017 | 1,338,390,693 | Optimal | Normal completion | 1,567.80 | 2.533 |
+| [Oil crop](Output/GAMS/logs/LFS-EAT/oilcrop_optimal_eat.log) | *LFS-EAT* | 446,134,941 | 44,017 | 1,338,390,693 | Optimal | Normal completion | 1,567.80 | 2.533 |
 | [Pig](Output/GAMS/logs/pig_optimal.log) | *LFS-Base* | 300,160,561 | 37,607 | 900,470,736 | Optimal | Normal completion | 35,716.25 | 11.303 |
-| [Pig](Output/GAMS/logs/pig_optimal_eat.log) | *LFS-EAT* | 323,543,425 | 39,641 | 970,619,327 | Optimal | Normal completion | 14,977.02 | 5.662 |
+| [Pig](Output/GAMS/logs/LFS-EAT/pig_optimal_eat.log) | *LFS-EAT* | 323,543,425 | 39,641 | 970,619,327 | Optimal | Normal completion | 14,977.02 | 5.662 |
 | [Poultry](Output/GAMS/logs/poultry_optimal.log) | *LFS-Base* | 469,122,655 | 45,080 | 1,407,352,659 | Optimal | Normal completion | 62,870.53 | 19.782 |
-| [Poultry](Output/GAMS/logs/poultry_optimal_eat.log) | *LFS-EAT* | 469,122,655 | 45,080 | 1,407,352,659 | Optimal | Normal completion | 77,897.14 | 23.816 |
+| [Poultry](Output/GAMS/logs/LFS-EAT/poultry_optimal_eat.log) | *LFS-EAT* | 469,122,655 | 45,080 | 1,407,352,659 | Optimal | Normal completion | 77,897.14 | 23.816 |
 | [Root](Output/GAMS/logs/root_optimal.log) | *LFS-Base* | 504,892,466 | 46,323 | 1,514,661,167 | Optimal | Normal completion | 4,071.42 | 3.536 |
-| [Root](Output/GAMS/logs/root_optimal_eat.log) | *LFS-EAT* | 504,892,466 | 46,323 | 1,514,661,167 | Optimal | Normal completion | 2,225.09 | 2.987 |
+| [Root](Output/GAMS/logs/LFS-EAT/LFS-EAT/root_optimal_eat.log) | *LFS-EAT* | 504,892,466 | 46,323 | 1,514,661,167 | Optimal | Normal completion | 2,225.09 | 2.987 |
 | [Vegetable](Output/GAMS/logs/vegetable_optimal.log) | *LFS-Base* | 456,518,329 | 44,642 | 1,369,539,819 | Optimal | Normal completion | 5,582.23 | 3.682 |
-| [Vegetable](Output/GAMS/logs/vegetable_optimal_eat.log) | *LFS-EAT* | 456,518,329 | 44,642 | 1,369,539,819 | Optimal | Normal completion | 45,723.30 | 15.023 |
+| [Vegetable](Output/GAMS/logs/LFS-EAT/vegetable_optimal_eat.log) | *LFS-EAT* | 456,518,329 | 44,642 | 1,369,539,819 | Optimal | Normal completion | 45,723.30 | 15.023 |
 
 *Note:* CPLEX time denotes solver time, while total time includes data loading, model generation, optimization and result export. For Pulses under *LFS-EAT*, total time is estimated from the log start time and output-file timestamp. “Pulses” corresponds to the combined `legume_nuts` category.
 
