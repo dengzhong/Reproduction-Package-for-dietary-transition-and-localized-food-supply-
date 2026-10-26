@@ -976,7 +976,7 @@ flowchart TD
     O --> P["Select objective and diet<br/>run 11 country-level GAMS models"]
     P --> Q["Country-level optimized flows"]
     I --> R["Combine LFS-Base and LFS-EAT shipments<br/>with production emission intensities"]
-    R --> S["Production-adjustment sensitivity: R20 and R40<br/>five result objects and comparison table"]
+    R --> S["Production-adjustment sensitivity: R20 and R40<br/>scenario results and comparison table"]
 ```
 
 The numbered R post-processing scripts currently read *LFS-Base* results. Other scenarios require corresponding result filenames and separate post-processing output paths. The GAMS scenarios are independent alternatives, not consecutive steps.
@@ -1334,7 +1334,6 @@ Results remain in the R session; no files are exported automatically:
 |----|----|
 | `BAU_results` | *LFS-Base*, not the separately defined manuscript Baseline |
 | `EAT_results` | *LFS-EAT* |
-| `EATR0_results` | No retained reduction (alpha = 0); identical to `EAT_results` |
 | `EATR20_results` | *LFS-EATR20* (alpha = 0.2) |
 | `EATR40_results` | *LFS-EATR40* (alpha = 0.4) |
 
