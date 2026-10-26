@@ -1152,7 +1152,7 @@ This demonstration tests resistance normalization, edge construction and path se
 Detailed optimization records for *LFS-Base* and *LFS-EAT* are available in `Output/GAMS/logs/`. The table below summarizes model dimensions, optimization status and computational performance across the 11 food categories. Model dimensions are reported before CPLEX presolve.
 
 | Food category | Scenario | Variables | Equations | Non-zeros | Model status | Job status | CPLEX time (s) | Total time (h) |
-|---|---|---:|---:|---:|---|---|---:|---:|
+|----|----|---:|---:|---:|----|----|---:|---:|
 | [Cereal](Output/GAMS/logs/cereal_optimal.log) | *LFS-Base* | 613,439,310 | 50,095 | 1,840,298,729 | Optimal | Normal completion | 32,771.53 | 17.003 |
 | [Cereal](Output/GAMS/logs/cereal_optimal_eat.log) | *LFS-EAT* | 613,439,310 | 50,095 | 1,840,298,729 | Optimal | Normal completion | 4,808.81 | 9.274 |
 | [Bovine](Output/GAMS/logs/Bovine_optimal.log) | *LFS-Base* | 862,331,583 | 58,744 | 2,586,971,250 | Optimal | Normal completion | 43,221.33 | 23.680 |
