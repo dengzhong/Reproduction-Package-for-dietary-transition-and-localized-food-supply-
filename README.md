@@ -79,8 +79,13 @@ Zhongci Deng<sup>1,8</sup>, Cai Li<sup>2,8</sup>, Yuanchao Hu<sup>3</sup>, Praja
   - [7.6. Run *LFS-Base* post-processing](#76-run-lfs-base-post-processing)
   - [7.7. Run country-level sensitivity analyses](#77-run-country-level-sensitivity-analyses)
   - [7.8. Run production-adjustment sensitivity analyses (R20 and R40)](#78-run-production-adjustment-sensitivity-analyses-r20-and-r40)
-- [8. Citation](#8-citation)
-- [9. License](#9-license)
+- [8. Source Data file](#8-source-data-file)
+  - [8.1. Figure 1](#81-figure-1)
+  - [8.2. Figure 2](#82-figure-2)
+  - [8.3. Figure 3](#83-figure-3)
+  - [8.4. Figure 4](#84-figure-4)
+- [9. Citation](#9-citation)
+- [10. License](#10-license)
 
 ## 1. Overview
 
@@ -597,6 +602,8 @@ Additional tools for accessing and reconstructing the large input datasets inclu
 Additional R package dependencies and implementation details can be identified from the corresponding scripts.
 
 ## 6. Data availability
+
+The numerical data underlying the figures are provided in the accompanying Source Data file.
 
 The analyses draw on spatially explicit agricultural production, food consumption, population, administrative boundaries, transportation networks, and GHG emission datasets.
 
@@ -1339,7 +1346,54 @@ The data frame `emissions_comparison_table`, corresponding to the structure of S
 View(emissions_comparison_table)
 ```
 
-## 8. Citation
+## 8. Source Data file
+
+The accompanying [Source Data file](Source%20Data%20file/) provides all numerical source data and R plotting code for the main Figures 1–4. Each figure folder contains the relevant data, plotting script and figure files. Source data are supplied as Excel workbooks and GeoTIFF rasters, with geographic boundary data included where required.
+
+Run the plotting scripts from the repository root (`Code availability`), using relative paths:
+
+```r
+source("Source Data file/Fig1/Fig1.R")
+source("Source Data file/Fig2/Fig2.R")
+source("Source Data file/Fig3/Figure3.R")
+source("Source Data file/Fig4/Figure4.R")
+```
+
+Keep the `Fig1`–`Fig4` folders together. Figure 3 uses the boundary data in `Fig1`; Figure 4 uses the boundary data in `Fig1` and the supplied emission-change rasters in `Fig3`. Generated figures are saved in their corresponding figure folders.
+
+### 8.1. Figure 1
+
+**Global food miles, transport emissions and food-related emissions under *LFS-Base*.**
+
+[Source data](Source%20Data%20file/Fig1/) · [R plotting code](Source%20Data%20file/Fig1/Fig1.R)
+
+![Figure 1: Global food miles, transport emissions and food-related emissions under LFS-Base](Source%20Data%20file/Fig1/Figure1.png)
+
+### 8.2. Figure 2
+
+**Global food miles under *LFS-EAT* and changes relative to *LFS-Base*.**
+
+[Source data](Source%20Data%20file/Fig2/) · [R plotting code](Source%20Data%20file/Fig2/Fig2.R)
+
+![Figure 2: Global food miles under LFS-EAT and changes relative to LFS-Base](Source%20Data%20file/Fig2/Figure2.png)
+
+### 8.3. Figure 3
+
+**Transport and food-related emissions under *LFS-EAT* and changes relative to *LFS-Base*.**
+
+[Source data](Source%20Data%20file/Fig3/) · [R plotting code](Source%20Data%20file/Fig3/Figure3.R)
+
+![Figure 3: Transport and food-related emissions under LFS-EAT and changes relative to LFS-Base](Source%20Data%20file/Fig3/Figure3.png)
+
+### 8.4. Figure 4
+
+**Spatial patterns of synergies and trade-offs between transport and food-related emission changes from *LFS-Base* to *LFS-EAT*.**
+
+[Source data and figure files](Source%20Data%20file/Fig4/) · [R plotting code](Source%20Data%20file/Fig4/Figure4.R). The input rasters are supplied in `Source Data file/Fig3/`.
+
+![Figure 4: Spatial patterns of synergies and trade-offs between transport and food-related emission changes](Source%20Data%20file/Fig4/Figure4.png)
+
+## 9. Citation
 
 If you use the code, methods, or analytical framework provided in this repository, please cite the corresponding research paper:
 
@@ -1351,7 +1405,7 @@ The original code archive is available at:
 
 <https://doi.org/10.6084/m9.figshare.28448249>
 
-## 9. License
+## 10. License
 
 The original code in this repository is released under the **MIT License**.
 
