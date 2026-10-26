@@ -11,6 +11,8 @@ Zhongci Deng<sup>1,8</sup>, Cai Li<sup>2,8</sup>, Yuanchao Hu<sup>3</sup>, Praja
 ## Contents
 
 - [1. Overview](#1-overview)
+  - [1.1. Model scope and scenarios](#11-model-scope-and-scenarios)
+  - [1.2. Emissions accounting boundary](#12-emissions-accounting-boundary)
 - [2. Software environment](#2-software-environment)
   - [2.1. Optimization environment](#21-optimization-environment)
   - [2.2. R environment](#22-r-environment)
@@ -48,6 +50,7 @@ Zhongci Deng<sup>1,8</sup>, Cai Li<sup>2,8</sup>, Yuanchao Hu<sup>3</sup>, Praja
     - [3.5.4. Data organization](#354-data-organization)
 - [4. Code and reproducibility](#4-code-and-reproducibility)
   - [4.1. Original code archive for verification](#41-original-code-archive-for-verification)
+  - [4.2. Repository guide and correspondence to supplementary materials](#42-repository-guide-and-correspondence-to-supplementary-materials)
 - [5. Software requirements](#5-software-requirements)
 - [6. Data availability](#6-data-availability)
   - [6.1. Large GAMS input dataset](#61-large-gams-input-dataset)
@@ -73,7 +76,7 @@ Zhongci Deng<sup>1,8</sup>, Cai Li<sup>2,8</sup>, Yuanchao Hu<sup>3</sup>, Praja
   - [7.4. Prepare GAMS inputs and run optimization](#74-prepare-gams-inputs-and-run-optimization)
     - [7.4.1. Validation of transport-network path selection](#741-validation-of-transport-network-path-selection)
   - [7.5. Model dimensions and optimization results](#75-model-dimensions-and-optimization-results)
-  - [7.6. Run LFS-Base post-processing](#76-run-lfs-base-post-processing)
+  - [7.6. Run *LFS-Base* post-processing](#76-run-lfs-base-post-processing)
   - [7.7. Run country-level sensitivity analyses](#77-run-country-level-sensitivity-analyses)
   - [7.8. Run production-adjustment sensitivity analyses (R20 and R40)](#78-run-production-adjustment-sensitivity-analyses-r20-and-r40)
 - [8. Citation](#8-citation)
@@ -83,23 +86,38 @@ Zhongci Deng<sup>1,8</sup>, Cai Li<sup>2,8</sup>, Yuanchao Hu<sup>3</sup>, Praja
 
 This repository provides the code and supporting materials for reproducing the analyses presented in the manuscript *Lower global food system emissions via integrating dietary transition and localized food supply*.
 
-The study investigates the potential of integrating localized food supply (LFS) and dietary transition strategies to reduce global food-system greenhouse gas (GHG) emissions. By combining spatial optimization, transportation network analysis, and GHG emission accounting, we evaluate the impacts of alternative food supply and dietary scenarios on food miles, food-related emissions, and transportation emissions.
+The study combines spatial optimization, transport-network analysis and greenhouse gas (GHG) accounting to assess how localized food supply and dietary transition affect food miles, on-farm production emissions and transport emissions. The grid-level analysis represents 2020 at 30-arcmin (0.5°) resolution and covers 11 food categories.
 
-The analysis considers spatially explicit food production and consumption, transportation infrastructure, regional production capacities, and alternative dietary demands.
+### 1.1. Model scope and scenarios
 
-### Emissions accounting boundary
+The optimization allocates food from production cells to demand cells. Spatial production availability is held fixed as an **upper bound**, while realized production is the sum of optimized shipments from each origin. Demand must be satisfied in full, and shipments are nonnegative. Exports and sourcing patterns are model outputs. The optimized allocations are theoretical counterfactuals, rather than forecasts of observed trade.
 
-The accounting covers **on-farm crop and livestock production emissions and transport emissions associated with modeled food and feed flows**. Food-related emissions refer to on-farm production emissions attributed to consumption through the optimized flows; transport emissions are calculated separately. Their sum represents the combined production and transport emissions within this boundary, rather than a full food-system life-cycle footprint.
+| Scenario or scenario family | Objective and demand | Reproduction entry point |
+|----|----|----|
+| *LFS-Base* | Minimize food miles under baseline dietary demand | `Code/LFS-Base/` |
+| *LFS-EAT* | Minimize food miles under EAT-Lancet dietary demand | `Code/LFS-EAT/` |
+| *LFS-halfEAT* | Minimize food miles under 50% convergence towards EAT-Lancet demand | `Code/LFS-halfEAT/` |
+| *MinE-Base*, *MinE-EAT*, *MinE-halfEAT* | Minimize on-farm food-related emissions under the corresponding dietary demands | `Code/Min-Base/`, `Code/Min-EAT/`, `Code/Min-halfEAT/` |
+| Country-level counterparts | Test the same objectives and dietary alternatives using national inputs | `Code/Country-level/`; Section 7.7 |
+| *LFS-EATR20*, *LFS-EATR40* | Retain 20% or 40% of the cell- and food-specific production reduction from *LFS-Base* to *LFS-EAT* | `Code/Production adjustment/`; Section 7.8 |
+
+The manuscript's *Baseline* is a separately constructed reference, not the optimized *LFS-Base* scenario. Names such as `BAU`, `bau` and `disHarv` in the grid-level post-processing code refer to *LFS-Base* results. The `Min-*` directory names correspond to the manuscript's *MinE-* scenarios.
+
+The core scenarios and the minimum-emission and half-EAT alternatives assume full production adjustment: unused production availability generates no production emissions. The R20/R40 sensitivity analysis relaxes this assumption without changing optimized demand or shipments. Food miles are quantity × distance, expressed as tonne-kilometres after the appropriate mass conversion; they include modeled food and feed movements and intra-cell transport.
+
+### 1.2. Emissions accounting boundary
+
+The accounting covers **on-farm crop and livestock production emissions and transport emissions associated with modeled food and feed flows**. Food-related emissions refer to on-farm production emissions. In the full-adjustment scenarios, these emissions are attributed to consumption through optimized flows; transport emissions are calculated separately. The production-adjustment sensitivity analysis adds retained-production emissions to the production country, as explained in Section 7.8. The sum of food-related and transport emissions represents the combined emissions within this boundary, rather than a full food-system life-cycle footprint.
 
 ![Food, feed and emissions accounting boundary, showing crop and livestock production sources, food and feed flows, and transport emissions](diagram.png)
 
-*Food, feed and emissions accounting framework. Crop and livestock production emissions are calculated as production quantities multiplied by the corresponding emission intensities. Transport emissions are calculated as transported quantities multiplied by mode-specific distances and emission factors.*
+*Food, feed and emissions accounting framework (Supplementary Figure 2). Crop and livestock production emissions are calculated as production quantities multiplied by the corresponding emission intensities. Transport emissions are calculated as transported quantities multiplied by mode-specific distances and emission factors.*
 
-- **Crop production:** Includes crop residues, residue burning, fertilizer application, manure applied to soils, rice cultivation and on-farm energy use. Crop emission intensities are applied to both food and modeled feed quantities for cereals and oil crops.
+- **Crop production:** Includes crop residues, residue burning, synthetic fertilizer application, manure applied to soils, rice cultivation and on-farm energy use. Crop emission intensities are applied to both food and modeled feed quantities for cereals and oil crops.
 - **Livestock production:** Includes enteric fermentation, manure management, manure left on pasture and on-farm energy use. Livestock emission intensities exclude feed-crop production emissions, which are counted in the crop component to avoid double counting.
-- **Transport:** Covers modeled food and feed movements through the transport network, with road, rail and sea accounted for separately.
+- **Transport:** Covers modeled food and feed movements by road, rail and sea, excluding air transport. Food- and mode-specific factors distinguish ambient from temperature-controlled transport (Supplementary Tables 1–2).
 
-Land-use change and downstream activities such as food processing, packaging, retail, cooking and waste management are outside this accounting boundary. The consumption endpoint indicates where production emissions are attributed; it does not add household consumption-stage emissions.
+The boundary excludes land-use change, food and feed processing, packaging, retail, household storage and preparation, and waste disposal. Transport accounting also excludes intermediate handling, stationary cold storage and duration-dependent food losses. The consumption endpoint indicates where production emissions are attributed; it does not add household consumption-stage emissions. Production-emission categories and allocation methods are documented in Supplementary Tables 12–14.
 
 ## 2. Software environment
 
@@ -108,14 +126,14 @@ Land-use change and downstream activities such as food processing, packaging, re
 The optimization models were implemented in GAMS and solved as linear programs. The principal computational environment is summarized below.
 
 | Component | Recorded configuration |
-|------------------------------------|------------------------------------|
+|----|----|
 | GAMS | 41.4.0 |
 | Optimization solver | IBM ILOG CPLEX 22.1.0.0 |
 | Operating platform | 64-bit Microsoft Windows, x86-64 |
 | Processor configuration | 2 sockets, 256 cores and 512 available hardware threads |
 | Model formulation | Continuous linear programming |
 
-Thread allocation varies among archived runs and is documented in the individual logs. Available hardware threads describe the server configuration rather than the number used by every optimization. The current GAMS scripts specify their solver and thread options explicitly; country-level models specify CONOPT4.
+Thread allocation varies among archived runs and is documented in the individual logs. Available hardware threads describe the server configuration rather than the number used by every optimization. The current GAMS scripts specify their solver and thread options explicitly.
 
 ### 2.2. R environment
 
@@ -141,7 +159,7 @@ R is used for data preprocessing, spatial analysis and post-processing. The soft
 | `terra`    | 1.8.86            |
 | `tidyr`    | 1.3.1             |
 
-The scripts also require `geosphere`, `pbapply`, `rhdf5`, which must be installed before running the corresponding distance and HDF5 processing scripts. `rhdf5` is distributed through Bioconductor.
+The scripts also require `geosphere`, `pbapply` and `rhdf5`, which must be installed before running the corresponding distance and HDF5 processing scripts. `rhdf5` is distributed through Bioconductor.
 
 The R–GAMS interface requires `gdxrrw` and an accessible GAMS GDX library. Initialize the interface with the system directory of the installed GAMS distribution:
 
@@ -345,7 +363,7 @@ All six datasets can be downloaded from the [official GRIP4 download page](https
 After extracting the downloaded archives, retain the following files where supplied by the dataset:
 
 | File | Description |
-|------------------------------------|------------------------------------|
+|----|----|
 | `GRIP4_TOTAL_DENS_m_km2.asc` | Density of all road types combined |
 | `GRIP4_TP1_DENS_m_km2.asc` | Density of highways |
 | `GRIP4_TP2_DENS_m_km2.asc` | Density of primary roads |
@@ -539,6 +557,29 @@ For transparency and ease of verification, the **original source code** used in 
 
 This archive is provided to allow reviewers and interested researchers to directly compare the original implementation with the organized code presented in this GitHub repository.
 
+### 4.2. Repository guide and correspondence to supplementary materials
+
+| Location | Contents |
+|----|----|
+| `Code/` | Preprocessing, grid-level and country-level optimization models, post-processing and production-adjustment sensitivity analysis |
+| `Input/` | Supplied model inputs, national statistics, lookups and locations for external datasets |
+| `Output/` | Spatial intermediates, optimization results, archived solver logs and post-processing outputs |
+| `Demo/` | Synthetic transport-network validation script, figure and numerical checks |
+| [Documentation/README.md](Documentation/README.md) | Parameter descriptions, data dictionary, identifiers and unit conventions |
+| [diagram.png](diagram.png) | Food/feed flows and emissions accounting boundary |
+
+The following entries connect the workflow to the revised Supplementary Information:
+
+| Supplementary item | Repository material or workflow |
+|----|----|
+| Figure 2: accounting boundary | `diagram.png`; Section 1.2 |
+| Figure 11: simple transport-network validation test | `Demo/transport_network_demo.R`; Section 7.4.1 |
+| Table 8: grid-level scenario emissions | Scenario models in Section 7.4 and scenario-specific post-processing based on Section 7.6 |
+| Table 10: country-level scenario emissions | Country-level models and analysis described in Section 7.7 |
+| Table 11: incomplete production adjustment | `Code/Production adjustment/production_adjustment_sensitivity.R`; `emissions_comparison_table` in Section 7.8 |
+
+Scripts `07`–`09` provide spatial and tabular results for food miles, emissions and trade analyses. The numbered post-processing scripts are configured for *LFS-Base*; reproducing other scenarios requires the corresponding input filenames and output paths. They do not automatically render every publication figure or assemble every supplementary table. Large files distributed through Releases must be reconstructed separately, as described in Section 6.
+
 ## 5. Software requirements
 
 The main software environments used in this study include:
@@ -588,7 +629,7 @@ Because the original dataset exceeds GitHub's individual file size limits, it ha
 The GDX-specific files in the Release are:
 
 | File                            | Description                               |
-|-------------------------------|-----------------------------------------|
+|---------------------------------|-------------------------------------------|
 | `distanceHisv_all.gdx.part-aaa` | Data part 1                               |
 | `distanceHisv_all.gdx.part-aab` | Data part 2                               |
 | `distanceHisv_all.gdx.part-aac` | Data part 3                               |
@@ -796,7 +837,7 @@ This GitHub repository provides organized code and supporting materials to facil
 
 ### 6.7. Cereal optimization output example
 
-The worked example `cereal_disHarv.gdx` contains the archived LFS-Base cereal optimization result. It is an **output** for inspection and post-processing, rather than a production, demand or distance input for rerunning optimization. The file contains the optimized shipment variable `x` and the distance parameter `distances`. Production and demand sets are supplied separately in `Input/GAMS input/`.
+The worked example `cereal_disHarv.gdx` contains the archived *LFS-Base* cereal optimization result. It is an **output** for inspection and post-processing, rather than a production, demand or distance input for rerunning optimization. The file contains the optimized shipment variable `x` and the distance parameter `distances`. Production and demand sets are supplied separately in `Input/GAMS input/`.
 
 #### 6.7.1. Download and reconstruct the example
 
@@ -927,9 +968,11 @@ flowchart TD
     A --> O["Country-level inputs"]
     O --> P["Select objective and diet<br/>run 11 country-level GAMS models"]
     P --> Q["Country-level optimized flows"]
+    I --> R["Combine LFS-Base and LFS-EAT shipments<br/>with production emission intensities"]
+    R --> S["Production-adjustment sensitivity: R20 and R40<br/>five result objects and comparison table"]
 ```
 
-The numbered R post-processing scripts currently read **LFS-Base** results. Other scenarios require corresponding result filenames and separate post-processing output paths. The GAMS scenarios are independent alternatives, not consecutive steps.
+The numbered R post-processing scripts currently read *LFS-Base* results. Other scenarios require corresponding result filenames and separate post-processing output paths. The GAMS scenarios are independent alternatives, not consecutive steps.
 
 ### 7.2. Prepare the working directory and software
 
@@ -950,7 +993,7 @@ Before starting, choose the spatial resolution, dietary scenario and optimizatio
 
 Keep `Input/` for supplied or downloaded data and `Output/` for generated files. Run the R commands below in the repository root, not inside `Code/`. Scripts with the same numeric prefix must all be identified by their full filenames.
 
-The GAMS files currently contain absolute paths. Replace the project prefix `/Users/zhongcideng/Desktop/Code availability/` with the absolute path to your local repository before running them. Keep the remaining input and output subdirectories unchanged. Use the solver specified in each model: the grid-level models use CPLEX, while the country-level models currently specify CONOPT4.
+The GAMS files currently contain absolute paths. Replace the project prefix `/Users/zhongcideng/Desktop/Code availability/` with the absolute path to your local repository before running them. Keep the remaining input and output subdirectories unchanged. Check the solver and thread settings in each model before execution.
 
 ### 7.3. Run preprocessing
 
@@ -972,7 +1015,7 @@ source("Code/04_food_demand_to_gams.R")
 Each `source()` call above is a separate step. Wait for it to finish before starting the next dependent step.
 
 | Step | R script in `Code/` | What it does and reads | Files used by the next steps |
-|------------------|------------------|------------------|------------------|
+|----|----|----|----|
 | 1 | `00_preprocessing_basedata.R` | Rasterizes the supplied country boundaries and calibrates the GPW population grid to the 2020 national totals in `population_WB.xlsx`. | `Output/basedata/country_ID.tif` and `Output/0.5by0.5/calib_2020_population_0.5by0.5.tif`. |
 | 2 | `01_processing_animal_based_food.R` | Reads the seven livestock-production rasters, processes bovine/sheep/goat products, and calibrates and aggregates production using `livestock.xlsx` and `livestock_new.xlsx`. It uses the country grid from Step 1. | Intermediate rasters under `Output/animal/` and calibrated animal-food production rasters under `Output/0.5by0.5/`. |
 | 3 | `01_processing_plant_based_food.R` | Combines the SPAM crop-production rasters into food groups, aggregates them to 0.5 degrees and calibrates production using `crop_production_demand.xlsx`. | `Output/plant/` intermediates and calibrated plant-food production rasters under `Output/0.5by0.5/`. |
@@ -1015,16 +1058,16 @@ The GAMS MATLAB interface must provide `wgdx`. The conversion reads H5 datasets 
 
 Choose a scenario and run all 11 food-category GAMS models in its folder:
 
-| Scenario folder under `Code/` | Objective | Dietary demand |
-|----|----|----|
-| `LFS-Base/` | Minimize food miles | Baseline |
-| `LFS-EAT/` | Minimize food miles | EAT-Lancet |
-| `LFS-halfEAT/` | Minimize food miles | Half-EAT |
-| `Min-Base/` | Minimize food-related emissions | Baseline |
-| `Min-EAT/` | Minimize food-related emissions | EAT-Lancet |
-| `Min-halfEAT/` | Minimize food-related emissions | Half-EAT |
+| Scenario | Folder under `Code/` | Objective | Dietary demand |
+|----|----|----|----|
+| *LFS-Base* | `LFS-Base/` | Minimize food miles | Baseline |
+| *LFS-EAT* | `LFS-EAT/` | Minimize food miles | EAT-Lancet |
+| *LFS-halfEAT* | `LFS-halfEAT/` | Minimize food miles | Half-EAT |
+| *MinE-Base* | `Min-Base/` | Minimize food-related emissions | Baseline |
+| *MinE-EAT* | `Min-EAT/` | Minimize food-related emissions | EAT-Lancet |
+| *MinE-halfEAT* | `Min-halfEAT/` | Minimize food-related emissions | Half-EAT |
 
-For example, run the bovine LFS-Base model from a terminal with GAMS available on the command path:
+For example, run the bovine *LFS-Base* model from a terminal with GAMS available on the command path:
 
 ``` bash
 gams "Code/LFS-Base/Bovine_optimal.gms"
@@ -1051,14 +1094,14 @@ GAMS reads each food's production and demand sets and GDX parameters. The food-m
 
 Grid-level results are written to `Output/GAMS/optimize result/`:
 
-| Scenario    | Result filename pattern           |
-|-------------|-----------------------------------|
-| LFS-Base    | `<food>_disHarv.gdx`              |
-| LFS-EAT     | `<food>_disHarv_eat.gdx`          |
-| LFS-halfEAT | `<food>_halfeat_minfoodmiles.gdx` |
-| Min-Base    | `<food>_minEmission.gdx`          |
-| Min-EAT     | `<food>_eat_minEmission.gdx`      |
-| Min-halfEAT | `<food>_halfeat_minEmission.gdx`  |
+| Scenario       | Result filename pattern           |
+|----------------|-----------------------------------|
+| *LFS-Base*     | `<food>_disHarv.gdx`              |
+| *LFS-EAT*      | `<food>_disHarv_eat.gdx`          |
+| *LFS-halfEAT*  | `<food>_halfeat_minfoodmiles.gdx` |
+| *MinE-Base*    | `<food>_minEmission.gdx`          |
+| *MinE-EAT*     | `<food>_eat_minEmission.gdx`      |
+| *MinE-halfEAT* | `<food>_halfeat_minEmission.gdx`  |
 
 After each solve, inspect the GAMS listing for the solver/model status and confirm that the requested optimum was obtained. A GDX file's existence alone does not establish feasibility or optimality. Proceed to post-processing only after the required 11 food-category results are available.
 
@@ -1072,10 +1115,10 @@ The demonstration checks that resistance increases with relative cost at fixed t
 
 ![Synthetic transport-network validation showing network classes, relative cost, travel time and minimum-resistance paths](Demo/Supplementary_Figure_X_4panel.png)
 
-**Synthetic transport-network validation.** **a**, Network classes. **b**, Relative transport cost. **c**, Travel time calculated as inverse speed. **d**, Minimum-resistance paths from origin O to destinations D1–D3. Costs above 25 are displayed at the upper colour limit in panel b; the full cost of 100 remains in the calculations. The resistance background in panel d is capped at 1 for visualization only. Colours and labels show cumulative path resistance, rather than geographic distance.
+**Supplementary Figure 11: A simple validation test of transport-network construction and least-cost path selection.** **a**, Synthetic transport network. **b**, Relative transport cost (1–100). **c**, Travel time per unit distance, calculated as inverse speed. **d**, Combined resistance surface and least-cost paths from origin O to destinations D1–D3. Background colours in panel d represent cell resistance on a displayed scale of 0–1; values above this range appear grey. Full resistance values are retained in path calculations. The annotations beneath the panels report cumulative path resistance, rather than geographic distance. The archived image and PDF retain `Supplementary_Figure_X_4panel` in their filenames.
 
 | Route | Path cells | Cumulative resistance | Absolute verification error | Penalized cells traversed |
-|---------------|--------------:|--------------:|--------------:|--------------:|
+|----|---:|---:|---:|---:|
 | O–D1 | 88 | 13.3905502392345 | 0 | 0 |
 | O–D2 | 116 | 16.6587131704860 | 0 | 0 |
 | O–D3 | 81 | 11.8947368421053 | 0 | 0 |
@@ -1099,29 +1142,51 @@ This demonstration tests resistance normalization, edge construction and path se
 
 ### 7.5. Model dimensions and optimization results
 
-The table below summarizes the 11 archived LFS-Base runs in `Output/GAMS/logs/`, implemented in GAMS 41.4.0 using CPLEX 22.1.0.0. All runs reported LP status 1 (optimal) and normal job completion. Each food-category link below opens its source log.
+Archived solver logs are available in `Output/GAMS/logs/` for the 11 food categories under each of *LFS-Base* and *LFS-EAT*, using GAMS 41.4.0 and CPLEX 22.1.0.0. Logs for the other scenarios were not retained and are not provided. The two sets below document representative grid-level model sizes; they do not establish exact variable counts or bounds for the other scenarios. Each food-category link opens the corresponding log.
 
-Model dimensions correspond to the generated GAMS model **before CPLEX presolve**. The variable count includes the objective variable, and the equation count includes the objective equation and any additional equations present in the archived run. These counts describe model dimensions, rather than the number of origin–destination pairs carrying positive shipments.
+License-holder details, license identifiers and administrator contact information have been removed from the logs. The *LFS-EAT* log filenames and embedded GAMS source names were standardized to match the scenario-specific naming convention. These are archived runs, not new executions of the reorganized scripts; numerical solver results and recorded timings are unchanged.
 
-| Food category | Variables | Equations | Solve status | CPLEX time (s) | Total elapsed time (h) |
-|------------|-----------:|-----------:|------------|-----------:|-----------:|
-| [Bovine](Output/GAMS/logs/Bovine_optimal.log) | 862,331,583 | 58,744 | Optimal | 43,221.33 | 23.680 |
-| [cereal](Output/GAMS/logs/cereal_optimal.log) | 613,439,310 | 50,095 | Optimal | 32,771.53 | 17.003 |
-| [eggs](Output/GAMS/logs/eggs_optimal.log) | 526,014,784 | 47,057 | Optimal | 8,782.20 | 5.136 |
-| [fruit](Output/GAMS/logs/fruit_optimal.log) | 532,173,062 | 47,271 | Optimal | 10,801.20 | 5.509 |
-| [legume_nuts](Output/GAMS/logs/legumes_nuts_optimal.log) | 440,978,749 | 44,102 | Optimal | 1,986.12 | 2.665 |
-| [milk](Output/GAMS/logs/milk_optimal.log) | 517,928,447 | 46,776 | Optimal | 15,120.39 | 6.842 |
-| [oilcrop](Output/GAMS/logs/oilcrop_optimal.log) | 446,134,941 | 44,017 | Optimal | 1,115.59 | 2.562 |
-| [pig](Output/GAMS/logs/pig_optimal.log) | 300,160,561 | 37,607 | Optimal | 35,716.25 | 11.303 |
-| [poultry](Output/GAMS/logs/poultry_optimal.log) | 469,122,655 | 45,080 | Optimal | 62,870.53 | 19.782 |
-| [root](Output/GAMS/logs/root_optimal.log) | 504,892,466 | 46,323 | Optimal | 4,071.42 | 3.536 |
-| [vegetable](Output/GAMS/logs/vegetable_optimal.log) | 456,518,329 | 44,642 | Optimal | 5,582.23 | 3.682 |
+Model dimensions correspond to the generated GAMS model **before CPLEX presolve**. The variable count includes the objective variable, and the equation count includes the objective equation and any additional equations present in the archived run. These counts describe model dimensions, rather than the number of origin–destination pairs carrying positive shipments. Non-zeros are the non-zero coefficient counts reported before presolve. Model status is summarized from the recorded CPLEX LP status. Job status reproduces the log’s completion message; it is not the formal GAMS solver-status code, which is not available in the retained logs. Objective values are copied from the solver output in the original model units (shipment mass unit × km), without unit conversion.
 
-CPLEX time is the solver-reported optimization time; total elapsed time is the GAMS job duration, including compilation, data loading, model generation, optimization and result export. This table summarizes archived runs; it does not report new solves of the reorganized scripts.
+***LFS-Base*** — all 11 logs report an optimal solution and normal job completion.
 
-### 7.6. Run LFS-Base post-processing
+| Food category | Variables | Equations | Non-zeros | Model status | Job status | Objective value | CPLEX time (s) | Total time (h) |
+|----|---:|---:|---:|----|----|---:|---:|---:|
+| [Bovine](Output/GAMS/logs/Bovine_optimal.log) | 862,331,583 | 58,744 | 2,586,971,250 | Optimal | Normal completion | 117,055,061.679595 | 43,221.33 | 23.680 |
+| [Cereals](Output/GAMS/logs/cereal_optimal.log) | 613,439,310 | 50,095 | 1,840,298,729 | Optimal | Normal completion | 886,809,956.429924 | 32,771.53 | 17.003 |
+| [Eggs](Output/GAMS/logs/eggs_optimal.log) | 526,014,784 | 47,057 | 1,578,027,332 | Optimal | Normal completion | 13,120,340.364158 | 8,782.20 | 5.136 |
+| [Fruits](Output/GAMS/logs/fruit_optimal.log) | 532,173,062 | 47,271 | 1,596,501,943 | Optimal | Normal completion | 290,958,178.175664 | 10,801.20 | 5.509 |
+| [Pulses and nuts](Output/GAMS/logs/legumes_nuts_optimal.log) | 440,978,749 | 44,102 | 1,322,922,262 | Optimal | Normal completion | 24,272,367.955022 | 1,986.12 | 2.665 |
+| [Milk](Output/GAMS/logs/milk_optimal.log) | 517,928,447 | 46,776 | 1,553,769,316 | Optimal | Normal completion | 211,592,418.239820 | 15,120.39 | 6.842 |
+| [Oil crops](Output/GAMS/logs/oilcrop_optimal.log) | 446,134,941 | 44,017 | 1,338,390,693 | Optimal | Normal completion | 2,369,448.656978 | 1,115.59 | 2.562 |
+| [Pork](Output/GAMS/logs/pig_optimal.log) | 300,160,561 | 37,607 | 900,470,736 | Optimal | Normal completion | 83,294,483.160251 | 35,716.25 | 11.303 |
+| [Poultry](Output/GAMS/logs/poultry_optimal.log) | 469,122,655 | 45,080 | 1,407,352,659 | Optimal | Normal completion | 73,628,574.978716 | 62,870.53 | 19.782 |
+| [Roots](Output/GAMS/logs/root_optimal.log) | 504,892,466 | 46,323 | 1,514,661,167 | Optimal | Normal completion | 102,625,443.464884 | 4,071.42 | 3.536 |
+| [Vegetables](Output/GAMS/logs/vegetable_optimal.log) | 456,518,329 | 44,642 | 1,369,539,819 | Optimal | Normal completion | 257,695,813.589990 | 5,582.23 | 3.682 |
 
-After the 11 LFS-Base GAMS models have produced their `*_disHarv.gdx` results, run:
+***LFS-EAT*** — all 11 logs report an optimal solution. Ten also record normal job completion; the `legume_nuts` log ends during solution reading.
+
+| Food category | Variables | Equations | Non-zeros | Model status | Job status | Objective value | CPLEX time (s) | Total time (h) |
+|----|---:|---:|---:|----|----|---:|---:|---:|
+| [Bovine](Output/GAMS/logs/Bovine_optimal_eat.log) | 862,331,583 | 58,744 | 2,586,971,250 | Optimal | Normal completion | 2,794,823.331445 | 3,518.02 | 13.324 |
+| [Cereals](Output/GAMS/logs/cereal_optimal_eat.log) | 613,439,310 | 50,095 | 1,840,298,729 | Optimal | Normal completion | 166,889,666.863271 | 4,808.81 | 9.274 |
+| [Eggs](Output/GAMS/logs/eggs_optimal_eat.log) | 526,014,784 | 47,057 | 1,578,027,332 | Optimal | Normal completion | 24,472,991.567024 | 45,389.81 | 15.086 |
+| [Fruits](Output/GAMS/logs/fruit_optimal_eat.log) | 532,173,062 | 47,271 | 1,596,501,943 | Optimal | Normal completion | 286,186,000.772088 | 19,018.78 | 7.762 |
+| [Pulses and nuts](Output/GAMS/logs/legume_nuts_optimal_eat.log) | 440,978,749 | 44,102 | 1,322,922,262 | Optimal | Not recorded | 1,360,929,772.347576 | 163,536.14 | 47.771 |
+| [Milk](Output/GAMS/logs/milk_optimal_eat.log) | 517,928,447 | 46,776 | 1,553,769,316 | Optimal | Normal completion | 1,597,244,712.670969 | 195,774.78 | 56.916 |
+| [Oil crops](Output/GAMS/logs/oilcrop_optimal_eat.log) | 446,134,941 | 44,017 | 1,338,390,693 | Optimal | Normal completion | 2,089,492.551534 | 1,567.80 | 2.533 |
+| [Pork](Output/GAMS/logs/pig_optimal_eat.log) | 323,543,425 | 39,641 | 970,619,327 | Optimal | Normal completion | 27,246,112.577763 | 14,977.02 | 5.662 |
+| [Poultry](Output/GAMS/logs/poultry_optimal_eat.log) | 469,122,655 | 45,080 | 1,407,352,659 | Optimal | Normal completion | 124,382,117.330800 | 77,897.14 | 23.816 |
+| [Roots](Output/GAMS/logs/root_optimal_eat.log) | 504,892,466 | 46,323 | 1,514,661,167 | Optimal | Normal completion | 19,303,593.228312 | 2,225.09 | 2.987 |
+| [Vegetables](Output/GAMS/logs/vegetable_optimal_eat.log) | 456,518,329 | 44,642 | 1,369,539,819 | Optimal | Normal completion | 1,949,780,289.305370 | 45,723.30 | 15.023 |
+
+CPLEX time is the solver-reported optimization time; total elapsed time is the recorded GAMS job duration, including compilation, data loading, model generation, optimization and result export. For *LFS-EAT* `legume_nuts`, total elapsed time is estimated from the log start time and the output GDX file timestamp.
+
+Across these archived runs, model sizes range from approximately 300 million to 862 million variables. Counts are reported separately for each scenario rather than assumed to be identical; for example, the pig model has 300,160,561 variables under *LFS-Base* and 323,543,425 under *LFS-EAT*.
+
+### 7.6. Run *LFS-Base* post-processing
+
+After the 11 *LFS-Base* GAMS models have produced their `*_disHarv.gdx` results, run:
 
 ``` r
 source("Code/05_postprocessing_food_trade_matrix.R")
@@ -1132,7 +1197,7 @@ source("Code/09_postprocessing_regional_food_trade.R")
 ```
 
 | Script | Main output | Output directory |
-|------------------------|------------------------|------------------------|
+|----|----|----|
 | `05` | `source_all.rds`: production-to-demand pairs used in optimized flows | `Output/GAMS/` |
 | `06` | Distance and reference-factor-weighted emissions by transport mode; partition RDS files and `bau_emission_type.rds` | `Output/transport_paths/` |
 | `07` | Food miles, transport emissions and regional transport-emission tables | `Output/food_miles_and_emissions/` |
@@ -1141,7 +1206,7 @@ source("Code/09_postprocessing_regional_food_trade.R")
 
 The five R steps perform the following calculations:
 
-1.  **Identify trade pairs (`05`).** Read `x` from the 11 LFS-Base GDX files, map production/demand labels to the raster-cell indices used in the optimization, merge the food-category records, and save each production cell's list of destination cells as `Output/GAMS/source_all.rds`. This is the input to `06`.
+1.  **Identify trade pairs (`05`).** Read `x` from the 11 *LFS-Base* GDX files, map production/demand labels to the raster-cell indices used in the optimization, merge the food-category records, and save each production cell's list of destination cells as `Output/GAMS/source_all.rds`. This is the input to `06`.
 2.  **Calculate paths by mode (`06`).** Read `source_all.rds`, the transport-speed raster and the production/population rasters; construct the transport graph; find each requested path; and sum segment distances by road, rail, sea and walk. Save `distance` in km together with the reference-factor-weighted `emissions` value, origin/destination cells, and production/demand indices. Write a separate RDS for each 10,000-origin partition, then combine all partitions into `Output/transport_paths/bau_emission_type.rds`.
 3.  **Calculate food miles and transport emissions (`07`).** Read the combined RDS and optimized shipment quantities. Recover mode-specific distances using the reference factors, apply the original intra-cell distance correction, and multiply distances by food quantities to obtain food miles. Apply food- and mode-specific transport emission factors to calculate transport emissions. Write 13 Excel workbooks and 165 TIFF rasters covering regional emissions and demand-cell distance, quantity-weighted distance and emissions, both overall and by mode. `distance_by_weight` is a sum of quantity × distance, not a weighted mean distance.
 4.  **Calculate food-related emissions (`08`).** Read optimized shipment quantities and the 11 production-intensity GDX files in `Input/GAMS input/`. Multiply each shipment by the emission intensity at its production location and attribute the result to the destination. Sum across foods for the consumption-cell TIFF, and export the country-by-food table. This script calculates production emissions attributable to consumption; it does not add transport emissions.
@@ -1151,7 +1216,14 @@ Keep the lookup workbook and the population, production and transport rasters av
 
 Script `06` runs all production-point partitions by default and has `combine_results <- TRUE`. To run selected partitions, set `partitions_to_run` to their indices; combine only after all expected partition files are available. Script `07` requires the combined `bau_emission_type.rds` file. Scripts `08` and `09` can run independently once the preprocessing inputs and GAMS results are available; they do not require scripts `05`–`07`.
 
-For LFS-EAT, half-EAT, minimum-emission or country-level results, adapt the input result names, spatial indices and output paths to that scenario before running the corresponding analysis.
+For script `08`, set `foods <- all_foods` for the full 11-category total, or select named categories such as `foods <- "cereal"`. Emission-intensity files are matched by food name. The selected foods determine `<tag>` (`all_foods` for the full set). The outputs are:
+
+- `000_food_related_emissions_LFS_Base_<tag>.tif`.
+- `food_related_emis_<tag>.xlsx`, with sheets `country_results`, `by_food` and `selected_total`.
+
+A subset total describes only the selected categories. Check unit conversions before comparing outputs with manuscript tables: script `07` transport emissions are in Gt CO2eq under the supplied thousand-tonne mass convention, whereas the manuscript tables use Mt CO2eq. Script `08` retains raw quantity × intensity values in its country sheet and raster, and divides category and selected-total summaries by `1e6`. See the [unit conventions](Documentation/README.md) for details.
+
+For *LFS-EAT*, half-EAT, minimum-emission or country-level results, adapt the input result names, spatial indices and output paths to that scenario before running the corresponding analysis.
 
 ### 7.7. Run country-level sensitivity analyses
 
@@ -1173,7 +1245,7 @@ flowchart TD
 There are six objective–diet combinations, each containing 11 models:
 
 | Folder under `Code/Country-level/` | Script suffix | Demand GDX filename |
-|------------------------|------------------------|------------------------|
+|----|----|----|
 | `Min-food-miles/BAU/` | `_Mindist_bau.gms` | `Bau_<food>_demand.gdx` |
 | `Min-food-miles/EAT/` | `_Mindist_eat.gms` | `EAT_<food>_demand.gdx` |
 | `Min-food-miles/halfEAT/` | `_Mindist_halfEAT.gms` | `halfEAT_<food>_demand.gdx` |
@@ -1230,7 +1302,7 @@ Output/GAMS/Country-level/optimize result/
 
 Food-miles results are named `Mindist_<scenario>_<food>_countrylevel.gdx`; minimum-emission results are named `MinE_<scenario>_<food>_countrylevel.gdx`, with `<scenario>` equal to `bau`, `eat` or `halfEAT`. Each GDX contains the optimized shipment variable `x` and the corresponding model data. Check the GAMS solve status before using the results.
 
-Country-level result analysis uses the national model labels and parameters. The grid-level workflow in scripts `05`–`09` uses raster-cell indices.
+Country-level result analysis uses the national model labels and parameters. These scenarios correspond to the country-level counterparts in Supplementary Table 10. National distances are based on great-circle distances between country centroids; they do not resolve road, rail and sea routes. Consequently, mode-specific transport emissions cannot be derived from these distances alone. The grid-level workflow in scripts `05`–`09` uses raster-cell indices and explicit transport networks.
 
 ### 7.8. Run production-adjustment sensitivity analyses (R20 and R40)
 
@@ -1245,7 +1317,7 @@ R(i,k,alpha) = Q_EAT(i,k) + alpha * max(Q_Base(i,k) - Q_EAT(i,k), 0)
 alpha = 0, 0.2 or 0.4
 ```
 
-The reference is optimized *LFS-Base* production, rather than input production capacity. Origins producing more under *LFS-EAT* retain their *LFS-EAT* output. Origins with positive *LFS-Base* output but no *LFS-EAT* shipments are included in the adjustment.
+The reference is optimized *LFS-Base* production, rather than input production capacity. The retained fractions are illustrative sensitivity assumptions, not empirically estimated adjustment rates. Because both allocations share the same production-capacity bounds, the adjusted production remains within those bounds. Origins producing more under *LFS-EAT* retain their *LFS-EAT* output. Origins with positive *LFS-Base* output but no *LFS-EAT* shipments are included in the adjustment.
 
 **Required inputs:**
 
@@ -1260,12 +1332,12 @@ Set the working directory to the repository root. The default `foods <- all_food
 source("Code/Production adjustment/production_adjustment_sensitivity.R")
 ```
 
-The script performs post-processing without another GAMS solve. Original shipment-related production emissions are attributed to **consumption countries**, while additional emissions from retained production are attributed to **production countries**. Adjusted country emissions equal the original *LFS-EAT* consumption-attributed emissions plus the country's additional production emissions. These country results therefore use a mixed attribution rule. Optimized shipments remain unchanged, and the script does not calculate additional transport emissions.
+The script performs post-processing without another GAMS solve. Original shipment-related production emissions are attributed to **consumption countries**, while additional emissions from retained production are attributed to **production countries**. Adjusted country emissions equal the original *LFS-EAT* consumption-attributed emissions plus the country's additional production emissions. These country results therefore use a mixed attribution rule. Optimized shipments remain unchanged, and the script does not calculate additional transport emissions. Retained output incurs on-farm emissions regardless of its eventual use; the script does not allocate this surplus to additional consumers.
 
 Results remain in the R session; no files are exported automatically:
 
 | R object | Scenario |
-|------------------------------------|------------------------------------|
+|----|----|
 | `BAU_results` | *LFS-Base*, not the separately defined manuscript Baseline |
 | `EAT_results` | *LFS-EAT* |
 | `EATR0_results` | No retained reduction (alpha = 0); identical to `EAT_results` |
@@ -1274,7 +1346,7 @@ Results remain in the R session; no files are exported automatically:
 
 Each object contains `by_food`, `total`, `country_by_food` and `country_total`. The data-frame emission column is named `food_related_emissions`. Country identifiers follow the country raster; cells without an assigned country are retained as `UNMAPPED` to preserve global totals. Emission summaries retain the original scripts' division by `1e6`; physical units follow the source quantity and intensity units.
 
-The data frame `emissions_comparison_table` compares *LFS-Base*, *LFS-EAT*, *LFS-EATR20* and *LFS-EATR40* by food category and includes a total row. For a subset of foods, the last row is labeled `Selected total`. Its display label `Pulses` corresponds to the combined `legume_nuts` category in the code. Inspect it with:
+The data frame `emissions_comparison_table`, corresponding to the structure of Supplementary Table 11, compares *LFS-Base*, *LFS-EAT*, *LFS-EATR20* and *LFS-EATR40* by food category and includes a total row. For a subset of foods, the last row is labeled `Selected total`. Its display label `Pulses` corresponds to the combined `legume_nuts` category in the code. Inspect it with:
 
 ``` r
 View(emissions_comparison_table)
@@ -1294,6 +1366,6 @@ The original code archive is available at:
 
 ## 9. License
 
-This repository is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
+The original code in this repository is released under the **MIT License**.
 
 The license applies to the original code distributed under this repository and does not automatically extend to third-party datasets or software dependencies. Users must also comply with the terms and attribution requirements of external datasets.
