@@ -10,10 +10,14 @@ path <- file.path("Source Data file", "Fig2")
 if (!dir.exists(path)) {
   stop("Set the working directory to the Code availability project root.")
 }
-crs_robinson <- "+proj=robin +datum=WGS84 +units=m +no_defs"
+# Plot the original longitude/latitude coordinates without reprojection.
 world <- st_read(file.path(path, "world.geojson"), quiet = TRUE) %>% filter(!grepl("ATA", SOC, ignore.case = TRUE))
-world <- st_transform(world, crs_robinson)
-map_grid <- project(crop(rast(file.path(path, "Source Data Fig2a.tif"))[[1]], ext(-180, 180, -56, 84)), crs_robinson, method = "near")
+world_coordinates <- st_coordinates(world)
+world_outline <- data.frame(
+  x = world_coordinates[, "X"],
+  y = world_coordinates[, "Y"],
+  group = do.call(paste, c(as.data.frame(world_coordinates[, grepl("^L", colnames(world_coordinates)), drop = FALSE]), sep = "_"))
+)
 regions <- c("Africa", "Asia", "Latin America", "Europe incl Russia", "North America & Oceania")
 region_labels <- c("Africa", "Asia", "LATAM", "EUR", "NAMO")
 foods <- c("bovine", "pig", "poultry", "pulses", "vegetable", "fruit", "cereal", "root", "Other cereal", "milk", "eggs")
@@ -22,17 +26,17 @@ food_colors <- setNames(c("#D04F4E", "#D87071", "#E19292", "#08519C", "#3182BD",
 theme_set(theme_minimal(base_size = 12, base_family = "Arial") + theme(text = element_text(size = 12, color = "#000000"), axis.text = element_text(size = 12, color = "#000000"), axis.title = element_text(size = 12, color = "#000000"), legend.text = element_text(size = 12, color = "#000000"), legend.title = element_text(size = 12, color = "#000000"), plot.tag = element_text(size = 12, color = "#000000", face = "bold"), panel.grid = element_blank(), plot.tag.position = c(0.01, 0.99), plot.margin = margin(6, 6, 6, 6)))
 map_plot <- function(file, layer, title, breaks, labels, colors, tag, signed = FALSE) {
   r <- rast(file.path(path, file))[[layer]]
-  z <- as.data.frame(project(r, map_grid, method = "near"), xy = TRUE, na.rm = FALSE)
+  z <- as.data.frame(crop(r, ext(-180, 180, -56, 84)), xy = TRUE, na.rm = FALSE)
   names(z)[3] <- "Value"
   z$Value <- z$Value / 1000
   total <- global(r, "sum", na.rm = TRUE)[1, 1] / 1e9
   label <- sprintf(if (signed) "atop(textstyle('%+.2f trillion'), textstyle('tkm'))" else "atop(textstyle('%.2f trillion'), textstyle('tkm'))", total)
   ggplot(z, aes(x, y)) +
     geom_raster(aes(fill = Value)) +
-    geom_sf(data = world, inherit.aes = FALSE, fill = NA, color = "black", linewidth = 0.1) +
+    geom_path(data = world_outline, aes(x = x, y = y, group = group), inherit.aes = FALSE, color = "black", linewidth = 0.1) +
     scale_fill_gradientn(colors = colors, limits = range(breaks), breaks = breaks, labels = labels, oob = scales::squish, na.value = "transparent", name = title) +
-    coord_sf(crs = crs_robinson, xlim = c(-17000000, 17000000), ylim = c(-6000000, 8500000), expand = FALSE) +
-    annotate("text", x = -12000000, y = -4000000, label = label, parse = TRUE, family = "Arial", size = 12, size.unit = "pt", color = "#000000") +
+    coord_equal(xlim = c(-180, 180), ylim = c(-56, 84), expand = FALSE) +
+    annotate("text", x = -125, y = -40, label = label, parse = TRUE, family = "Arial", size = 12, size.unit = "pt", color = "#000000") +
     guides(fill = guide_colorbar(title.position = "top", title.hjust = 0.5, barwidth = grid::unit(65, "mm"), barheight = grid::unit(3.5, "mm"))) +
     labs(x = NULL, y = NULL, tag = tag) +
     theme(axis.text = element_blank(), axis.ticks = element_blank(), legend.position = "bottom", legend.margin = margin(0, 0, 0, 0), legend.box.spacing = grid::unit(0, "mm"))
